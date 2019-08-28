@@ -2,9 +2,87 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>This Example</title>
+  <title>Elemental Plane Adventure</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="./assets/css/style.css">
 </head>
-<body>
+<body class="bg-dark">
+<div class="jumbotron bg-secondary rounded m-2 text-center border ">
+  <h1 class="text-white">Elemental Plane Adventure</h1>
+  <p class="text-white">It's gona get hot, then cold, then hard, then windy in here!</p>
+</div>
+
+<div class="container-fluid">
+  <div class="row">
+
+    <!-- Left Menu -->
+    <div class="col-3">
+      <div class="menuWindow">
+        <ul class="nav nav-tabs text-white" role="tablist">
+          <li class="nav-item">
+            <p class="nav-link active" data-toggle="tab" href="#playerStats">Stats</p>
+          </li>
+          <li class="nav-item">
+            <p class="nav-link" data-toggle="tab" href="#playerInventory">Inventory</p>
+          </li>
+          <li class="nav-item">
+              <p class="nav-link" data-toggle="tab" href="#gameOptions">Options</p>
+          </li>
+        </ul>
+
+        <!-- Tab Content-->
+        <div class="tab-content text-white">
+          <!-- Player Stats Tab -->
+          <div id="playerStats" class="container tab-pane active"><br>
+            <h3>Stats</h3>
+            <p>Stats here</p>
+          </div>
+          <!-- Player Inventory -->
+          <div id="playerInventory" class="container tab-pane fade"><br>
+            <h3>Inventory</h3>
+            <p>Inventory here</p>
+          </div>
+          <!-- Options -->
+          <div id="gameOptions" class="container tab-pane fade"><br>
+            <h3>Options</h3>
+            <p>Options Here</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Main Window -->
+    <div class="col-6">
+      <div id="mapWindow" class="border">
+
+      </div>
+    </div>
+
+    <!-- Right Menu -->
+    <div class="col-3">
+      <div class="menuWindow">
+        <ul class="nav nav-tabs text-white" role="tablist">
+          <li class="nav-item">
+            <p class="nav-link active" data-toggle="tab" href="#playerStats">Stats</p>
+          </li>
+          <li class="nav-item">
+            <p class="nav-link" data-toggle="tab" href="#playerInventory">Inventory</p>
+          </li>
+          <li class="nav-item">
+              <p class="nav-link" data-toggle="tab" href="#gameOptions">Options</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
 <script src="./assets/javascript/game.js"></script>
 </body>
 </html>
