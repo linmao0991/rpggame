@@ -39,7 +39,7 @@
         <!-- Tab Content-->
         <div class="tab-content text-white">
           <!-- Player Stats Tab -->
-          <div id="playerStats" class="container tab-pane active "><br>
+          <div id="playerStats" class="container tab-pane active"><br>
             <h3>Stats</h3>
             <p id="playerName"></p>
             <p id="playerLevel"></p>
@@ -55,7 +55,7 @@
                 <h3>Inventory</h3>
               </div>
               <div class="col">
-                <h4>Gold:</h4>
+                <h5>Gold: <span id="playerGold"></span></h5>
               </div>
             </div>
             <div class="row">
@@ -87,9 +87,69 @@
 
     <!-- Main Window -->
     <div class="col-6">
-      <div id="mapWindow" class="border">
+        
+        <!-- Animation Screen -->
+        <div class="row">
+          <div class="col border rounded" id="battleScreen">
 
-      </div>
+            <!-- Information Dispaly -->
+            <div class="row position-relative battleText p-1">
+                <!-- Battle Text -->
+                <div class="col-12">
+                    <div class="border rounded h-100 w-100 bg-light">
+  
+                    </div>
+                </div>
+              </div>
+
+            <!-- Image Display-->
+            <div class="row position-relative  inline-block imgDisplay border">
+              <div class="col-6">
+                <div class="text-center spriteImg">
+                <img src="./assets/images/player_standing.png" class=" h-25 w-25 spriteImg">
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="text-center">
+                  <img src="./assets/images/demon.png" class="h-50 w-50">
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Battle Menu -->
+        <div class="row p-1">
+          <!-- Menu Options -->
+          <div class="col-7 border rounded" id="battleMenu">
+            <div class="nav nav-tabs text-white">
+            <button type="button" class="btn btn-info m-1" data-toggle="tab" href="#menuAttack">Attack</button><br>
+            <button type="button" class="btn btn-info m-1" data-toggle="tab" href="#menuMagic">Magic</button><br>
+            <button type="button" class="btn btn-info m-1" data-toggle="tab" href="#menuItem">Item</button><br>
+            <button type="button" class="btn btn-info m-1" data-toggle="tab" href="#menuFlee">Flee</button>
+            </div>
+
+            <div class="tab-content text-white">
+                <div id="menuAttack" class="container tab-pane fade">
+                  <p>Attack information here</p>
+                </div>
+                <div id="menuMagic" class="container tab-pane fade">
+                    <p>Spell information here</p>
+                </div>
+                <div id="menuItem" class="container tab-pane fade">
+                    <p>Item information here</p>
+                </div>
+                <div id="menuFlee" class="container tab-pane fade">
+                    <p>Flee information here</p>
+                </div>
+            </div>
+          </div>
+          <!-- Menu Information -->
+          <div class="col-5 border rounded " id="battleMenuInfo">
+
+          </div>
+        </div>
     </div>
 
     <!-- Right Menu -->

@@ -1,9 +1,6 @@
 document.addEventListener('DOMContentLoaded', function(){
     var playerHP = 0;
     var playerMP = 0;
-    var npcHp = 0;
-    var npcMP = 0;
-
 
     var npcInfo = {
         rockGolem: {
@@ -40,8 +37,8 @@ document.addEventListener('DOMContentLoaded', function(){
         },
     }
     // item Data
-    // iValue is the gold value of the item
-    // iType is the type of item
+    // value is the gold value of the item
+    // type is the type of item
     //      0 = misc item
     //      1 = consumable
     //      2 = weapon
@@ -49,30 +46,30 @@ document.addEventListener('DOMContentLoaded', function(){
     //      4 = armor
     var itemData = {
         iD00: {
-            iName: "Iron",
-            iValue: 10,
-            iType: 0,
+            name: "Iron",
+            value: 10,
+            type: 0,
         },
         iD01:{
-            iName: "Meat",
-            iValue: 1,
-            iType: 1,
+            name: "Meat",
+            value: 1,
+            type: 1,
         },
         iD02: {
-            iName: "Iron Sword",
-            iValue: 50,
-            iType: 2,
+            name: "Iron Sword",
+            value: 50,
+            type: 2,
         },
        iD03: {
-            iName: "Iron Helm",
-            iValue: 50,
-            iType: 3,
+            name: "Iron Helm",
+            value: 50,
+            type: 3,
         },
         iD04: {
-            iName: "Iron Armor",
-            iValue: 50,
-            iType: 4,
-        }
+            name: "Iron Armor",
+            value: 50,
+            type: 4,
+        },
     }
 
     var spellData = {
@@ -109,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function(){
         // equipment list
         equipList: [],
         spellList: [spellData.fire,spellData.water,spellData.earth],
-        inventory: [itemData.iD00,itemData.iD01,itemData.iD02,itemData.iD03,itemData.iD04,itemData.iD00,itemData.iD00,itemData.iD00,itemData.iD00,itemData.iD00,itemData.iD00,itemData.iD00,itemData.iD00,],
+        inventory: [],
         randNames: ["Bob","Jerry","Barry","Jill","Heather","Kim"],
     }
 
@@ -118,8 +115,8 @@ document.addEventListener('DOMContentLoaded', function(){
             for (i = 0; i < playerInfo.inventory.length; i++){
                 var currentItem = $("<p>");
                 currentItem.addClass("inventoryItem");
-                currentItem.attr("item-type", playerInfo.inventory[i].iType);
-                currentItem.text(playerInfo.inventory[i].iName);
+                currentItem.attr("item-type", playerInfo.inventory[i].type);
+                currentItem.text(playerInfo.inventory[i].name);
                 $("#inventoryList").append(currentItem);
             }
         },
@@ -139,12 +136,21 @@ document.addEventListener('DOMContentLoaded', function(){
                 $("#spellsList").append(currentSpell);
             }
         },
+        updateGold: function(){
+            $("#playerGold").text(playerInfo.gold);
+        },
+        initializeCharacter: function(){
+            playerInfo.name = prompt("Please enter your character's name, hit cancel for random name.");
+            if(playerInfo.name == null){
+                playerInfo.name = playerInfo.randNames[Math.floor(Math.random() * playerInfo.randNames.length)];
+            }
+            menuFunctions.updateGold();
+            menuFunctions.loadPlayerSpells();
+            menuFunctions.loadInventory();
+            menuFunctions.loadPlayerStats();
+        },
     }
-    playerInfo.name = prompt("Please enter your character's name, hit cancel for random name.");
-    if(playerInfo.name == null){
-        playerInfo.name = playerInfo.randNames[Math.floor(Math.random() * playerInfo.randNames.length)];
-    }
-    menuFunctions.loadPlayerSpells();
-    menuFunctions.loadInventory();
-    menuFunctions.loadPlayerStats();
+    
+
+    menuFunctions.initializeCharacter();
 });
