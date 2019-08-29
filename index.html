@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body class="bg-dark">
-<div class="jumbotron bg-secondary rounded m-2 text-center border ">
+<div class="jumbotron rounded m-2 text-center">
   <h1 class="text-white">Elemental Plane Adventure</h1>
   <p class="text-white">It's gona get hot, then cold, then hard, then windy in here!</p>
 </div>
@@ -18,7 +18,7 @@
 <div class="container-fluid">
   <div class="row">
 
-    <!-- Left Menu -->
+  <!-- Left Menu -->
     <div class="col-3">
       <div class="menuWindow">
         <ul class="nav nav-tabs text-white" role="tablist">
@@ -26,30 +26,60 @@
             <p class="nav-link active" data-toggle="tab" href="#playerStats">Stats</p>
           </li>
           <li class="nav-item">
+            <p class="nav-link" data-toggle="tab" href="#playerEquipment">Equipment</p>
+        </li>
+          <li class="nav-item">
             <p class="nav-link" data-toggle="tab" href="#playerInventory">Inventory</p>
           </li>
           <li class="nav-item">
-              <p class="nav-link" data-toggle="tab" href="#gameOptions">Options</p>
+              <p class="nav-link" data-toggle="tab" href="#playerSpells">Spells</p>
           </li>
         </ul>
 
         <!-- Tab Content-->
         <div class="tab-content text-white">
           <!-- Player Stats Tab -->
-          <div id="playerStats" class="container tab-pane active"><br>
+          <div id="playerStats" class="container tab-pane active "><br>
             <h3>Stats</h3>
-            <p>Stats here</p>
+            <p id="playerName"></p>
+            <p id="playerLevel"></p>
+            <p id="playerHp"></p>
+            <p id="playerMp"></p>
+            <p id="playerAtk"></p>
+            <p id="playerDef"></p>
           </div>
           <!-- Player Inventory -->
           <div id="playerInventory" class="container tab-pane fade"><br>
-            <h3>Inventory</h3>
-            <p>Inventory here</p>
+            <div class="row">
+              <div class="col">
+                <h3>Inventory</h3>
+              </div>
+              <div class="col">
+                <h4>Gold:</h4>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 overflow-auto">
+                <!-- Inventory list -->
+                <div id="inventoryList">
+                </div>
+              </div>
+            </div> 
           </div>
-          <!-- Options -->
-          <div id="gameOptions" class="container tab-pane fade"><br>
-            <h3>Options</h3>
-            <p>Options Here</p>
+          <!-- Player Spells -->
+          <div id="playerSpells" class="container tab-pane fade"><br>
+            <h3>Spells</h3>
+            <!-- Spell List -->
+            <div id="spellsList">
+
+            </div>
           </div>
+          <!--Equipment-->
+          <div id="playerEquipment" class="container tab-pane fade"><br>
+            <h3>Equipment</h3>
+            <p>Equipment Here</p>
+          </div>
+
         </div>
 
       </div>
@@ -64,7 +94,7 @@
 
     <!-- Right Menu -->
     <div class="col-3">
-      <div class="menuWindow">
+      <!-- <div class="menuWindow">
         <ul class="nav nav-tabs text-white" role="tablist">
           <li class="nav-item">
             <p class="nav-link active" data-toggle="tab" href="#playerStats">Stats</p>
@@ -76,7 +106,7 @@
               <p class="nav-link" data-toggle="tab" href="#gameOptions">Options</p>
           </li>
         </ul>
-      </div>
+      </div> -->
     </div>
 
   </div>

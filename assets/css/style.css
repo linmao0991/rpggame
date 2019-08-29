@@ -4,7 +4,17 @@
     min-width: 600px;
 }
 
+#inventoryList {
+    overflow-y: scroll;
+    height: 378px;
+}
+
 .menuWindow {
     width: 100%;
     height: 500px;
+}
+
+.jumbotron {
+    background-image: url(../images/space.jpg);
+    background-size: cover;
 }

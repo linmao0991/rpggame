@@ -48,32 +48,27 @@ document.addEventListener('DOMContentLoaded', function(){
     //      3 = helmet
     //      4 = armor
     var itemData = {
-        iron: {
-            iD: 00,
+        iD00: {
             iName: "Iron",
             iValue: 10,
             iType: 0,
         },
-        meat:{
-            iD: 01,
+        iD01:{
             iName: "Meat",
             iValue: 1,
             iType: 1,
         },
-        ironSword: {
-            iD: 02,
+        iD02: {
             iName: "Iron Sword",
             iValue: 50,
             iType: 2,
         },
-        ironHelm: {
-            iD: 03,
+       iD03: {
             iName: "Iron Helm",
             iValue: 50,
             iType: 3,
         },
-        ironArmor: {
-            iD: 04,
+        iD04: {
             iName: "Iron Armor",
             iValue: 50,
             iType: 4,
@@ -82,18 +77,22 @@ document.addEventListener('DOMContentLoaded', function(){
 
     var spellData = {
         fire: {
+            name: "Fire",
             dmg: 10,
             mpCost: 10,
         },
         water: {
+            name: "Water",
             dmg: 10,
             mpCost: 10,
         },
         earth: {
+            name: "Earth",
             dmg: 10,
             mpCost: 10,
         },
         wind: {
+            name: "Wind",
             dmg: 10,
             mpCost: 10,
         },
@@ -101,12 +100,51 @@ document.addEventListener('DOMContentLoaded', function(){
 
     var playerInfo = {
         name: "",
+        level: 1,
         maxHp: 100,
         maxMp: 100,
         atk: 10,
         def: 10,
         gold: 0,
-        inventory: [],
+        // equipment list
+        equipList: [],
+        spellList: [spellData.fire,spellData.water,spellData.earth],
+        inventory: [itemData.iD00,itemData.iD01,itemData.iD02,itemData.iD03,itemData.iD04,itemData.iD00,itemData.iD00,itemData.iD00,itemData.iD00,itemData.iD00,itemData.iD00,itemData.iD00,itemData.iD00,],
+        randNames: ["Bob","Jerry","Barry","Jill","Heather","Kim"],
     }
 
+    var menuFunctions = {
+        loadInventory: function(){
+            for (i = 0; i < playerInfo.inventory.length; i++){
+                var currentItem = $("<p>");
+                currentItem.addClass("inventoryItem");
+                currentItem.attr("item-type", playerInfo.inventory[i].iType);
+                currentItem.text(playerInfo.inventory[i].iName);
+                $("#inventoryList").append(currentItem);
+            }
+        },
+        loadPlayerStats: function(){
+            $("#playerName").text("Name: "+playerInfo.name);
+            $("#playerLevel").text("Level: "+playerInfo.level);
+            $("#playerHp").text("HP: "+playerHP+"/"+playerInfo.maxHp);
+            $("#playerMp").text("MP: "+playerMP+"/"+playerInfo.maxMp);
+            $("#playerAtk").text("Attack Power: "+playerInfo.atk);
+            $("#playerDef").text("Defense :"+playerInfo.def);
+        },
+        loadPlayerSpells: function(){
+            for (i = 0; i < playerInfo.spellList.length; i++){
+                var currentSpell = $("<p>");
+                currentSpell.addClass("playerSpell");
+                currentSpell.text(playerInfo.spellList[i].name);
+                $("#spellsList").append(currentSpell);
+            }
+        },
+    }
+    playerInfo.name = prompt("Please enter your character's name, hit cancel for random name.");
+    if(playerInfo.name == null){
+        playerInfo.name = playerInfo.randNames[Math.floor(Math.random() * playerInfo.randNames.length)];
+    }
+    menuFunctions.loadPlayerSpells();
+    menuFunctions.loadInventory();
+    menuFunctions.loadPlayerStats();
 });
