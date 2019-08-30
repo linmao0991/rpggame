@@ -18,6 +18,12 @@
     height: 350px;
     width: 100%;
 }
+
+.battleMenuScroll {
+    height: 100px;
+    overflow-y: scroll;
+}
+
 .menuWindow {
     width: 100%;
     height: 500px;

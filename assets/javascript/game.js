@@ -106,18 +106,14 @@ document.addEventListener('DOMContentLoaded', function(){
         // equipment list
         equipList: [],
         spellList: [spellData.fire,spellData.water,spellData.earth],
-        inventory: [],
+        inventory: [itemData.iD01,itemData.iD00,itemData.iD03],
         randNames: ["Bob","Jerry","Barry","Jill","Heather","Kim"],
     }
 
     var menuFunctions = {
         loadInventory: function(){
             for (i = 0; i < playerInfo.inventory.length; i++){
-                var currentItem = $("<p>");
-                currentItem.addClass("inventoryItem");
-                currentItem.attr("item-type", playerInfo.inventory[i].type);
-                currentItem.text(playerInfo.inventory[i].name);
-                $("#inventoryList").append(currentItem);
+                $("#inventoryList").append("<p class='inventoryItem' item-type='"+playerInfo.inventory[i].type+"'>"+playerInfo.inventory[i].name+"</p>");
             }
         },
         loadPlayerStats: function(){
@@ -130,10 +126,7 @@ document.addEventListener('DOMContentLoaded', function(){
         },
         loadPlayerSpells: function(){
             for (i = 0; i < playerInfo.spellList.length; i++){
-                var currentSpell = $("<p>");
-                currentSpell.addClass("playerSpell");
-                currentSpell.text(playerInfo.spellList[i].name);
-                $("#spellsList").append(currentSpell);
+                $("#spellsList").append("<p class='playerSpell'>"+playerInfo.spellList[i].name+"</p>");
             }
         },
         updateGold: function(){
@@ -146,11 +139,10 @@ document.addEventListener('DOMContentLoaded', function(){
             }
             menuFunctions.updateGold();
             menuFunctions.loadPlayerSpells();
-            menuFunctions.loadInventory();
             menuFunctions.loadPlayerStats();
+            menuFunctions.loadInventory();
         },
     }
     
-
     menuFunctions.initializeCharacter();
 });
