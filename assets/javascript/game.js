@@ -2,40 +2,12 @@ document.addEventListener('DOMContentLoaded', function(){
     var playerHP = 0;
     var playerMP = 0;
 
-    var npcInfo = {
-        rockGolem: {
-            name: "rockGolem",
-            maxHp: 200, 
-            maxMp: 100, 
-            atk: 10, 
-            def: 10,
-            inventory: [],
-        },
-        ironGolem: {
-            name: "ironGolem",
-            maxMp: 300, 
-            mp: 200, 
-            atk: 5, 
-            def: 5,
-            inventory: [],
-        },
-        fireGolem: {
-            name: "fireGolem",
-            maxMp: 150,
-            mp: 100,
-            atk: 15,
-            def: 15,
-            inventory: [],
-        },
-        giantCrab: {
-            name: "giantCrab",
-            maxMp: 100,
-            mp: 100,
-            atk: 6,
-            def: 6,
-            inventory: [],
-        },
-    }
+    var npcInfo = [ //[name,max hp, max mp, attack power, defense, experience]
+            rockGolem = ["Rock Golem",200,100, 10, 10,50,],
+            ironGolem = ["Iron Golem",300, 200, 5, 5,50,],
+            fireGolem = ["Fire Golem",150,100,15,15,50,],
+            giantCrab = ["Giant Crab",100,100,6,6,50],
+        ]
     // item Data
     // value is the gold value of the item
     // type is the type of item
@@ -44,33 +16,13 @@ document.addEventListener('DOMContentLoaded', function(){
     //      2 = weapon
     //      3 = helmet
     //      4 = armor
-    var itemData = {
-        iD00: {
-            name: "Iron",
-            value: 10,
-            type: 0,
-        },
-        iD01:{
-            name: "Meat",
-            value: 1,
-            type: 1,
-        },
-        iD02: {
-            name: "Iron Sword",
-            value: 50,
-            type: 2,
-        },
-       iD03: {
-            name: "Iron Helm",
-            value: 50,
-            type: 3,
-        },
-        iD04: {
-            name: "Iron Armor",
-            value: 50,
-            type: 4,
-        },
-    }
+    var itemData = [ //[name, value, type]
+            iron = ["Iron",10,0,],
+            meat = ["Meat",1,1,],
+            ironSword = ["Iron Sword", 50, 2,],
+            ironHelm = ["Iron Helm",50,3,],
+            ironArmor = ["Iron Armor",50,4,],
+    ]
 
     var spellData = {
         fire: {
@@ -106,14 +58,14 @@ document.addEventListener('DOMContentLoaded', function(){
         // equipment list
         equipList: [],
         spellList: [spellData.fire,spellData.water,spellData.earth],
-        inventory: [itemData.iD01,itemData.iD00,itemData.iD03],
+        inventory: [itemData[0],itemData[1],itemData[2]],
         randNames: ["Bob","Jerry","Barry","Jill","Heather","Kim"],
     }
 
     var menuFunctions = {
         loadInventory: function(){
             for (i = 0; i < playerInfo.inventory.length; i++){
-                $("#inventoryList").append("<p class='inventoryItem' item-type='"+playerInfo.inventory[i].type+"'>"+playerInfo.inventory[i].name+"</p>");
+                $("#inventoryList").append("<p class='inventoryItem' item-type='"+playerInfo.inventory[i][2]+"'>"+playerInfo.inventory[i][0]+"</p>");
             }
         },
         loadPlayerStats: function(){
@@ -143,6 +95,29 @@ document.addEventListener('DOMContentLoaded', function(){
             menuFunctions.loadInventory();
         },
     }
+
+    var battleFunctions = {
+        loadMonster: function(){
+
+        },
+        loadBatMenuSpells: function(){
+            for (i = 0; i < playerInfo.spellList.length; i++){
+                $("#batMenuSpells").append("<p class='playerSpell'>"+playerInfo.spellList[i].name+"</p>");
+            }
+        },
+        loadBatMenuItems: function(){
+            for ( i = 0; i < playerInfo.inventory.length; i++){
+                if(playerInfo.inventory[i][2] == 1){
+                    $("#batMenuItem").append("<p class='usableItem'>"+playerInfo.inventory[i][0]+"</p>")
+                }
+                else{
+
+                }
+            }
+        },
+    }
     
+    $(document).on("keypress", battleFunctions.loadBatMenuSpells);
+    $(document).on("keypress", battleFunctions.loadBatMenuItems);
     menuFunctions.initializeCharacter();
 });
