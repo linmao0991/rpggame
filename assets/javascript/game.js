@@ -118,9 +118,10 @@ $(document).ready(function(){
     var menuFunctions = {
         // Loads inventory based on the playerInfo object's inventory array.
         loadInventory: function(){
-            $("#inventoryList").html("");
+            var invList = $("#inventoryList");
+            invList.html("");
             for (i = 0; i < playerInfo.inventory.length; i++){   
-                $("#inventoryList").append("<p class='inventoryItem' item-type='"+playerInfo.inventory[i][2]+"'>"+playerInfo.inventory[i][0]+"</p>");
+                invList.append("<p class='inventoryItem' item-type='"+playerInfo.inventory[i][2]+"'>"+playerInfo.inventory[i][0]+"</p>");
             }
         },
         //  Loads player stats based on the playerInfo object.
@@ -167,25 +168,26 @@ $(document).ready(function(){
         //This functions is randomly chooses a integer and sets it to variable counter. This variable is used to either find nothing, find a tresure chest, or find a monster.
         exploreDunLvl: function(){
             crntlyexplor = 1;
-            $("#battleText").append("<p class='m-0'>You explore the current level of the dungeon...</p>");
-            $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+            var bText =  $("#battleText");
+            bText.append("<p class='m-0'>You explore the current level of the dungeon...</p>");
+            bText.scrollTop($(bText).prop("scrollHeight"));
             var encounter = Math.floor(Math.random() * 10);
             console.log(encounter);
             setTimeout ( function (){
                 if ( encounter <= 5 && encounter >=3) { 
-                    $("#battleText").append("<p class='m-0'>-After awhile you find nothing.</p>");
-                    $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+                    bText.append("<p class='m-0'>-After awhile you find nothing.</p>");
+                    bText.scrollTop($(bText).prop("scrollHeight"));
                     crntlyexplor = 0;
                 }
     
                 if ( encounter <= 2 && encounter >=0) {
-                    $("#battleText").append("<p class='m-0'>--You wander around a corner and find a tresure chest!</p>");
+                    bText.append("<p class='m-0'>--You wander around a corner and find a tresure chest!</p>");
                     var itemIndex = Math.floor(Math.random()* itemData.length);
                     setTimeout(function(){
                         var item = Math.floor(Math.random() * 2);
                         if( item == 0 ){
-                        $("#battleText").append("<p class='m-0'>----Inside the chest you find "+itemData[itemIndex][0]+"!</p>");
-                        $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+                        bText.append("<p class='m-0'>----Inside the chest you find "+itemData[itemIndex][0]+"!</p>");
+                        bText.scrollTop($(bText).prop("scrollHeight"));
                         playerInfo.inventory.push(itemData[itemIndex]);
                         menuFunctions.loadInventory();
                         battleFunctions.loadBatMenuItems();
@@ -193,8 +195,8 @@ $(document).ready(function(){
                         }
                         else {
                             var gold = Math.floor(Math.random() * 50) + 5;
-                            $("#battleText").append("<p class='m-0'>----Inside the chest you find "+gold+" gold!</p>");
-                            $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+                            bText.append("<p class='m-0'>----Inside the chest you find "+gold+" gold!</p>");
+                            bText.scrollTop($(bText).prop("scrollHeight"));
                             playerInfo.gold = playerInfo.gold + gold;
                             menuFunctions.updateGold();
                             crntlyexplor = 0;
@@ -204,9 +206,9 @@ $(document).ready(function(){
                 }
     
                 if( encounter >= 6 ){
-                    $("#battleText").append("<p class='m-0'>--You wander around and monster appears from around the corner!</p>");
-                    $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
                     battleFunctions.loadMonster();
+                    bText.append("<p class='m-0'>--You wander around and a <b>"+batMonData.firstMon.name+"</b> appears from around the corner!</p>");
+                    bText.scrollTop($(bText).prop("scrollHeight"));
                     crntlyexplor = 0;
                 }
             },1000);
