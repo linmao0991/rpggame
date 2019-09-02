@@ -1,8 +1,8 @@
-document.addEventListener('DOMContentLoaded', function(){
+$(document).ready(function(){
     var playerHP = 0;
     var playerMP = 0;
 
-    var npcInfo = [ //[name,max hp, max mp, attack power, defense, experience]
+    var monInfo = [ //[name,max hp, max mp, attack power, defense, experience]
             rockGolem = ["Rock Golem",200,100, 10, 10,50,],
             ironGolem = ["Iron Golem",300, 200, 5, 5,50,],
             fireGolem = ["Fire Golem",150,100,15,15,50,],
@@ -19,10 +19,49 @@ document.addEventListener('DOMContentLoaded', function(){
     var itemData = [ //[name, value, type]
             iron = ["Iron",10,0,],
             meat = ["Meat",1,1,],
+            paper = ["Paper",1,0],
+            coal = ["Coal",2,0],
+            wood = ["Wood",1,0],
+            leather = ["Leather",5,0],
+            healingPotion = ["Healing Potion", 20, 1],
+            manaPotion = ["Mana Potion",20,1],
             ironSword = ["Iron Sword", 50, 2,],
             ironHelm = ["Iron Helm",50,3,],
             ironArmor = ["Iron Armor",50,4,],
     ]
+
+    var batMonData = {
+        firstMon: {
+            name: "",
+            maxHp: 0,
+            curHp: 0,
+            maxMP: 0,
+            curMp: 0,
+            attack: 0,
+            defense: 0,
+            experience: 0,
+        },
+        secondMon: {
+            name: "",
+            maxHp: 0,
+            curHp: 0,
+            maxMP: 0,
+            curMp: 0,
+            attack: 0,
+            defense: 0,
+            experience: 0,
+        },
+        thirdMon: {
+            name: "",
+            maxHp: 0,
+            curHp: 0,
+            maxMP: 0,
+            curMp: 0,
+            attack: 0,
+            defense: 0,
+            experience: 0,
+        },
+    }
 
     var spellData = {
         fire: {
@@ -64,7 +103,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
     var menuFunctions = {
         loadInventory: function(){
-            for (i = 0; i < playerInfo.inventory.length; i++){
+            $("#inventoryList").html("");
+            for (i = 0; i < playerInfo.inventory.length; i++){   
                 $("#inventoryList").append("<p class='inventoryItem' item-type='"+playerInfo.inventory[i][2]+"'>"+playerInfo.inventory[i][0]+"</p>");
             }
         },
@@ -89,26 +129,73 @@ document.addEventListener('DOMContentLoaded', function(){
             if(playerInfo.name == null){
                 playerInfo.name = playerInfo.randNames[Math.floor(Math.random() * playerInfo.randNames.length)];
             }
+            playerHP = playerInfo.maxHp;
+            playerMP = playerInfo.maxMp;
             menuFunctions.updateGold();
             menuFunctions.loadPlayerSpells();
             menuFunctions.loadPlayerStats();
             menuFunctions.loadInventory();
+            battleFunctions.loadBatMenuItems();
+            battleFunctions.loadBatMenuSpells();
+            console.log(playerInfo.inventory);
         },
     }
 
     var battleFunctions = {
+        exploreDunLvl: function(){
+            $("#battleText").append("<p class='m-0'>You explore the current level of the dungeon...</p>");
+            $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+            var encounter = Math.floor(Math.random() * 10);
+            console.log(encounter);
+            setTimeout ( function (){
+                if ( encounter <= 5 && encounter >=3) { 
+                    $("#battleText").append("<p class='m-0'>-After awhile you find nothing.</p>");
+                    $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+                }
+    
+                if ( encounter <= 2 && encounter >=0) {
+                    $("#battleText").append("<p class='m-0'>-You wander around a corner and find a tresure chest!</p>");
+                    var itemIndex = Math.floor(Math.random()* itemData.length);
+                    setTimeout(function(){
+                        $("#battleText").append("<p class='m-0'>--Inside the chest you find "+itemData[itemIndex][0]+"!</p>");
+                        playerInfo.inventory.push(itemData[itemIndex]);
+                        menuFunctions.loadInventory();
+                        battleFunctions.loadBatMenuItems();
+                        $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+                    },500);
+                    console.log(playerInfo.inventory);
+                }
+    
+                if( encounter >= 6 ){
+                    $("#battleText").append("<p class='m-0'>-You wander around and monster appears from around the corner!</p>");
+                    battleFunctions.loadMonster();
+                    $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+                }
+            },1000);
+        },
         loadMonster: function(){
-
+            var ranIndex = Math.floor(Math.random() * monInfo.length);
+            batMonData.firstMon.name = monInfo[ranIndex][0];
+            batMonData.firstMon.maxHp = monInfo[ranIndex][1];
+            batMonData.firstMon.curHp = monInfo[ranIndex][1];
+            batMonData.firstMon.maxMp = monInfo[ranIndex][2];
+            batMonData.firstMon.curMp = monInfo[ranIndex][2];
+            batMonData.firstMon.attack = monInfo[ranIndex][3];
+            batMonData.firstMon.defense = monInfo[ranIndex][4];
+            batMonData.firstMon.experience = monInfo[ranIndex][5];
+            console.log(batMonData);
         },
         loadBatMenuSpells: function(){
+            $("#batMenuSpells").html("");
             for (i = 0; i < playerInfo.spellList.length; i++){
                 $("#batMenuSpells").append("<p class='playerSpell'>"+playerInfo.spellList[i].name+"</p>");
             }
         },
         loadBatMenuItems: function(){
+            $("#batMenuItem").html("");
             for ( i = 0; i < playerInfo.inventory.length; i++){
                 if(playerInfo.inventory[i][2] == 1){
-                    $("#batMenuItem").append("<p class='usableItem'>"+playerInfo.inventory[i][0]+"</p>")
+                    $("#batMenuItem").append("<p class='usableItem'>"+playerInfo.inventory[i][0]+"</p>");
                 }
                 else{
 
@@ -117,7 +204,10 @@ document.addEventListener('DOMContentLoaded', function(){
         },
     }
     
-    $(document).on("keypress", battleFunctions.loadBatMenuSpells);
-    $(document).on("keypress", battleFunctions.loadBatMenuItems);
     menuFunctions.initializeCharacter();
+
+    $("#exploreDunLvl").click(function (){
+        battleFunctions.exploreDunLvl();
+    });
+
 });

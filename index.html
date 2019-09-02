@@ -93,25 +93,24 @@
           <div class="col border rounded" id="battleScreen">
 
             <!-- Information Dispaly -->
-            <div class="row position-relative battleText p-1">
+            <div class="row position-relative p-1">
                 <!-- Battle Text -->
                 <div class="col-12">
-                    <div class="border rounded h-100 w-100 bg-light">
-  
+                    <div class="border rounded bg-light battleTextBox" id="battleText">
                     </div>
                 </div>
               </div>
 
             <!-- Image Display-->
-            <div class="row position-relative  inline-block imgDisplay border">
+            <div class="row">
               <div class="col-6">
-                <div class="text-center spriteImg">
-                <img src="./assets/images/player_standing.png" class=" h-25 w-25 spriteImg">
+                <div class="text-center position-relative imgDisplay">
+                  <img src="./assets/images/player_standing.png" class="playerSprite">
                 </div>
               </div>
               <div class="col-6">
-                <div class="text-center">
-                  <img src="./assets/images/demon.png" class="h-50 w-50">
+                <div c;ass="text-center position-relative imgDisplay">
+                  <img src="./assets/images/demon.png" class="monSprite">
                 </div>
               </div>
             </div>
@@ -156,19 +155,9 @@
 
     <!-- Right Menu -->
     <div class="col-3">
-      <!-- <div class="menuWindow">
-        <ul class="nav nav-tabs text-white" role="tablist">
-          <li class="nav-item">
-            <p class="nav-link active" data-toggle="tab" href="#playerStats">Stats</p>
-          </li>
-          <li class="nav-item">
-            <p class="nav-link" data-toggle="tab" href="#playerInventory">Inventory</p>
-          </li>
-          <li class="nav-item">
-              <p class="nav-link" data-toggle="tab" href="#gameOptions">Options</p>
-          </li>
-        </ul>
-      </div> -->
+      <div>
+        <button type="button" class="btn btn-secondary" id="exploreDunLvl">Explore Dungeon Level</button>
+      </div>
     </div>
 
   </div>

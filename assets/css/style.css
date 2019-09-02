@@ -1,9 +1,3 @@
-#mapWindow {
-    width: 100%;
-    /* height: 500px; */
-    min-width: 600px;
-}
-
 #inventoryList {
     overflow-y: scroll;
     height: 378px;
@@ -16,7 +10,16 @@
 
 #battleScreen {
     height: 350px;
-    width: 100%;
+    width: 800px;
+}
+
+#battleText {
+    
+}
+
+.battleTextBox {
+    height: 100px;
+    overflow-y: scroll;
 }
 
 .battleMenuScroll {
@@ -29,14 +32,25 @@
     height: 500px;
 }
 
-.spriteImg {
-    align-self:flex-end;
+.playerSprite {
+    position:absolute;
+    width: 100px;
+    height: 75px;
+    bottom: 100px;
+    left: 100px;
 }
+
+.monSprite {
+    position:absolute;
+    width: 150px;
+    height: 150px;
+    bottom: 75px;
+    right: 50px;
+}
+
 .imgDisplay{
     height: 250px;
-}
-.battleText{
-    height: 100px;
+    width: 250px;
 }
 
 .jumbotron {
