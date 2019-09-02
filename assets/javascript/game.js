@@ -5,6 +5,10 @@ $(document).ready(function(){
     var playerMP = 0;
     // variable sets to 0 to disable the onclick function from calling exploreDunLvl method untill method has finished running.
     var crntlyexplor = 0;
+    // variable used to start and end combat.
+    var crntlyInBat = 0;
+    // variable to start and end player turn
+    var playerTurn = 0;
 
     // Array containaing arrays of monsters.
     var monInfo = [ //[name,max hp, max mp, attack power, defense, experience]
@@ -186,7 +190,7 @@ $(document).ready(function(){
                     setTimeout(function(){
                         var item = Math.floor(Math.random() * 2);
                         if( item == 0 ){
-                        bText.append("<p class='m-0'>----Inside the chest you find "+itemData[itemIndex][0]+"!</p>");
+                        bText.append("<p class='m-0'>----Inside the chest you find <b>"+itemData[itemIndex][0]+"</b>!</p>");
                         bText.scrollTop($(bText).prop("scrollHeight"));
                         playerInfo.inventory.push(itemData[itemIndex]);
                         menuFunctions.loadInventory();
@@ -195,7 +199,7 @@ $(document).ready(function(){
                         }
                         else {
                             var gold = Math.floor(Math.random() * 50) + 5;
-                            bText.append("<p class='m-0'>----Inside the chest you find "+gold+" gold!</p>");
+                            bText.append("<p class='m-0'>----Inside the chest you find <b>"+gold+"</b> gold!</p>");
                             bText.scrollTop($(bText).prop("scrollHeight"));
                             playerInfo.gold = playerInfo.gold + gold;
                             menuFunctions.updateGold();
@@ -209,9 +213,33 @@ $(document).ready(function(){
                     battleFunctions.loadMonster();
                     bText.append("<p class='m-0'>--You wander around and a <b>"+batMonData.firstMon.name+"</b> appears from around the corner!</p>");
                     bText.scrollTop($(bText).prop("scrollHeight"));
-                    crntlyexplor = 0;
+                    crntlyInBat = 1;
                 }
             },1000);
+        },
+        meleeAtkSlash: function(){
+            var dmgDone = playerInfo.atk - (batMonData.firstMon.defense * .50);
+            console.log(dmgDone);
+            batMonData.firstMon.curHp = batMonData.firstMon.curHp - dmgDone;
+            console.log(batMonData.firstMon.curHp);
+            if( batMonData.firstMon.curHp <= 0) {
+                this.clearBatMonData();
+                crntlyInBat = 0;
+                crntlyexplor = 0;
+            }
+            playerTurn = 0;
+
+        },
+        clearBatMonData: function(){
+            var x = batMonData.firstMon;
+            x.name = "";
+            x.maxHp = 0;
+            x.curHp = 0;
+            x.maxMp = 0;
+            x.curHp = 0;
+            x.attack = 0;
+            x.defense = 0;
+            x.experience = 0;
         },
         // This functions randomly selects a monter from the monInfo array and sets its values into the appropriate batMonData object.
         loadMonster: function(){
@@ -241,19 +269,23 @@ $(document).ready(function(){
                     $("#batMenuItem").append("<p class='usableItem'>"+playerInfo.inventory[i][0]+"</p>");
                 }
                 else{
-
                 }
             }
         },
     }
-    
     //Called the method initializeCharacter in the menuFunctions.
     menuFunctions.initializeCharacter();
-
     //Onclick event for the button with id exploreDunLvl. Calls exploreDunLvl method if crntlyexplor variable is set to 0, else do nothing.
     $("#exploreDunLvl").click(function (){
         if ( crntlyexplor == 0){
             battleFunctions.exploreDunLvl();
+        }
+    });
+    //On click event for Slash button under attack tab in the battle menu
+    $("#atkSlash").click(function(){
+        if (crntlyInBat == 1 && playerTurn == 0){
+            playerTurn == 1;
+            battleFunctions.meleeAtkSlash();
         }
     });
 

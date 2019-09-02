@@ -86,7 +86,7 @@
     </div>
 
     <!-- Main Window -->
-    <div class="col-6">
+    <div class="col-6" style="height:350px;">
         
         <!-- Animation Screen -->
         <div class="row">
@@ -99,27 +99,34 @@
                     <div class="border rounded bg-light battleTextBox" id="battleText">
                     </div>
                 </div>
-              </div>
+            </div>
 
             <!-- Image Display-->
             <div class="row">
               <div class="col-6">
                 <div class="text-center position-relative imgDisplay">
                   <img src="./assets/images/player_standing.png" class="playerSprite">
+                  <div id="plyrTmr" class="rounded border border-dark"></div>
+                  <div id="plyrHp" class="rounded border border-dark"></div>
+                  <div id="plyrMp" class="rounded border border-dark"></div>
                 </div>
               </div>
               <div class="col-6">
                 <div c;ass="text-center position-relative imgDisplay">
                   <img src="./assets/images/demon.png" class="monSprite">
+                  <div id="firstMonTmr" class="rounded border border-dark"></div>
+                  <div id="firstMonHp" class="rounded border border-dark"></div>
                 </div>
               </div>
             </div>
 
           </div>
-        </div>
+
+          </div>
+    
 
         <!-- Battle Menu -->
-        <div class="row p-1">
+        <div class="row p-1 m-1">
           <!-- Menu Options -->
           <div class="col-7 border rounded" id="battleMenu">
             <div class="nav nav-tabs text-white">
@@ -130,8 +137,8 @@
             </div>
 
             <div class="tab-content text-white">
-                <div id="batMenuAtk" class="container tab-pane fade">
-                    <p>Attack information here</p>
+                <div id="menuAttack" class="container tab-pane fade">
+                    <button type="button" class="btn btn-secondary m-1" id="atkSlash">Slash Attack</button>
                 </div>
                 <div id="menuMagic" class="container tab-pane fade">
                     <div class="battleMenuScroll" id="batMenuSpells">
@@ -141,7 +148,7 @@
                   <div class="battleMenuScroll" id="batMenuItem">
                   </div>
                 </div>
-                <div id="batMenuFlee" class="container tab-pane fade">
+                <div id="menuFlee" class="container tab-pane fade">
                     <p>Flee information here</p>
                 </div>
             </div>

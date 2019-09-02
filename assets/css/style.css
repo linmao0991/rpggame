@@ -27,6 +27,49 @@
     overflow-y: scroll;
 }
 
+#plyrTmr{
+    position:absolute;
+    height: 5px;
+    width: 100px;
+    background-color: yellow;
+    bottom: 65px;
+    right: 50px;
+}
+#plyrHp{
+    position:absolute;
+    height: 5px;
+    width: 100px;
+    background-color: green;
+    bottom: 60px;
+    right: 50px;
+}
+#plyrMp{
+    position:absolute;
+    height: 5px;
+    width: 100px;
+    background-color: blue;
+    bottom: 55px;
+    right: 50px;
+}
+
+#firstMonTmr{
+    position:absolute;
+    height: 5px;
+    width: 100px;
+    background-color: yellow;
+    right: 90px;
+    bottom: 65px;
+}
+
+#firstMonHp{
+    position:absolute;
+    height: 5px;
+    width: 100px;
+    background-color: green;
+    right: 90px;
+    bottom: 60px;
+}
+
 .menuWindow {
     width: 100%;
     height: 500px;
