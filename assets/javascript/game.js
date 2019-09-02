@@ -1,6 +1,7 @@
 $(document).ready(function(){
     var playerHP = 0;
     var playerMP = 0;
+    var crntlyexplor = 0;
 
     var monInfo = [ //[name,max hp, max mp, attack power, defense, experience]
             rockGolem = ["Rock Golem",200,100, 10, 10,50,],
@@ -143,6 +144,7 @@ $(document).ready(function(){
 
     var battleFunctions = {
         exploreDunLvl: function(){
+            crntlyexplor = 1;
             $("#battleText").append("<p class='m-0'>You explore the current level of the dungeon...</p>");
             $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
             var encounter = Math.floor(Math.random() * 10);
@@ -151,25 +153,39 @@ $(document).ready(function(){
                 if ( encounter <= 5 && encounter >=3) { 
                     $("#battleText").append("<p class='m-0'>-After awhile you find nothing.</p>");
                     $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+                    crntlyexplor = 0;
                 }
     
                 if ( encounter <= 2 && encounter >=0) {
                     $("#battleText").append("<p class='m-0'>-You wander around a corner and find a tresure chest!</p>");
                     var itemIndex = Math.floor(Math.random()* itemData.length);
                     setTimeout(function(){
+                        var item = Math.floor(Math.random() * 2);
+                        if( item == 0 ){
                         $("#battleText").append("<p class='m-0'>--Inside the chest you find "+itemData[itemIndex][0]+"!</p>");
+                        $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
                         playerInfo.inventory.push(itemData[itemIndex]);
                         menuFunctions.loadInventory();
                         battleFunctions.loadBatMenuItems();
-                        $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+                        crntlyexplor = 0;
+                        }
+                        else {
+                            var gold = Math.floor(Math.random() * 50) + 5;
+                            $("#battleText").append("<p class='m-0'>--Inside the chest you find "+gold+" gold!</p>");
+                            $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+                            playerInfo.gold = playerInfo.gold + gold;
+                            menuFunctions.updateGold();
+                            crntlyexplor = 0;
+                        }
                     },500);
                     console.log(playerInfo.inventory);
                 }
     
                 if( encounter >= 6 ){
                     $("#battleText").append("<p class='m-0'>-You wander around and monster appears from around the corner!</p>");
-                    battleFunctions.loadMonster();
                     $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
+                    battleFunctions.loadMonster();
+                    crntlyexplor = 0;
                 }
             },1000);
         },
@@ -207,7 +223,9 @@ $(document).ready(function(){
     menuFunctions.initializeCharacter();
 
     $("#exploreDunLvl").click(function (){
-        battleFunctions.exploreDunLvl();
+        if ( crntlyexplor == 0){
+            battleFunctions.exploreDunLvl();
+        }
     });
 
 });
