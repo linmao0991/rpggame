@@ -219,14 +219,18 @@ $(document).ready(function(){
         },
         meleeAtkSlash: function(){
             var dmgDone = playerInfo.atk - (batMonData.firstMon.defense * .50);
-            console.log(dmgDone);
-            batMonData.firstMon.curHp = batMonData.firstMon.curHp - dmgDone;
+            var monD = batMonData.firstMon
+            monD.curHp = monD.curHp - dmgDone;
             console.log(batMonData.firstMon.curHp);
-            if( batMonData.firstMon.curHp <= 0) {
+            var percHp = 100 * (monD.curHp/monD.maxHp);
+            console.log("hp as a percentage of max "+percHp);
+            if( monD.curHp <= 0) {
                 this.clearBatMonData();
                 crntlyInBat = 0;
                 crntlyexplor = 0;
+                console.log(batMonData);
             }
+            $("#firstMonHp").css({"width": percHp+"px",});
             playerTurn = 0;
 
         },
@@ -244,14 +248,15 @@ $(document).ready(function(){
         // This functions randomly selects a monter from the monInfo array and sets its values into the appropriate batMonData object.
         loadMonster: function(){
             var ranIndex = Math.floor(Math.random() * monInfo.length);
-            batMonData.firstMon.name = monInfo[ranIndex][0];
-            batMonData.firstMon.maxHp = monInfo[ranIndex][1];
-            batMonData.firstMon.curHp = monInfo[ranIndex][1];
-            batMonData.firstMon.maxMp = monInfo[ranIndex][2];
-            batMonData.firstMon.curMp = monInfo[ranIndex][2];
-            batMonData.firstMon.attack = monInfo[ranIndex][3];
-            batMonData.firstMon.defense = monInfo[ranIndex][4];
-            batMonData.firstMon.experience = monInfo[ranIndex][5];
+            var monData = batMonData.firstMon;
+            monData.name = monInfo[ranIndex][0];
+            monData.maxHp = monInfo[ranIndex][1];
+            monData.curHp = monInfo[ranIndex][1];
+            monData.maxMp = monInfo[ranIndex][2];
+            monData.curMp = monInfo[ranIndex][2];
+            monData.attack = monInfo[ranIndex][3];
+            monData.defense = monInfo[ranIndex][4];
+            monData.experience = monInfo[ranIndex][5];
             console.log(batMonData);
         },
         //Function load the players known spells into the battle window menu in the html.
