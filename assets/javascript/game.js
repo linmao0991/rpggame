@@ -12,10 +12,10 @@ $(document).ready(function(){
 
     // Array containaing arrays of monsters.
     var monInfo = [ //[name,max hp, max mp, attack power, defense, experience]
-            rockGolem = ["Rock Golem",200,100, 10, 10,50,],
-            ironGolem = ["Iron Golem",300, 200, 5, 5,50,],
-            fireGolem = ["Fire Golem",150,100,15,15,50,],
-            giantCrab = ["Giant Crab",100,100,6,6,50],
+            rockGolem = ["Rock Golem",50,100, 10, 10,50,],
+            ironGolem = ["Iron Golem",50, 100, 10, 10,50,],
+            fireGolem = ["Fire Golem",35,200,15,7,50,],
+            giantCrab = ["Giant Crab",20,100,6,4,50],
         ]
 
     // itemData array contains array of items.
@@ -124,7 +124,7 @@ $(document).ready(function(){
         loadInventory: function(){
             var invList = $("#inventoryList");
             invList.html("");
-            for (i = 0; i < playerInfo.inventory.length; i++){   
+            for (var i = 0; i < playerInfo.inventory.length; i++){   
                 invList.append("<p class='inventoryItem' item-type='"+playerInfo.inventory[i][2]+"'>"+playerInfo.inventory[i][0]+"</p>");
             }
         },
@@ -171,22 +171,17 @@ $(document).ready(function(){
     var battleFunctions = {
         //This functions is randomly chooses a integer and sets it to variable counter. This variable is used to either find nothing, find a tresure chest, or find a monster.
         exploreDunLvl: function(){
-            crntlyexplor = 1;
             var bText =  $("#battleText");
             bText.append("<p class='m-0'>You explore the current level of the dungeon...</p>");
             bText.scrollTop($(bText).prop("scrollHeight"));
             var encounter = Math.floor(Math.random() * 10);
             console.log(encounter);
-            setTimeout ( function (){
-                if ( encounter <= 5 && encounter >=3) { 
-                    bText.append("<p class='m-0'>-After awhile you find nothing.</p>");
-                    bText.scrollTop($(bText).prop("scrollHeight"));
-                    crntlyexplor = 0;
-                }
-    
-                if ( encounter <= 2 && encounter >=0) {
+
+            if ( encounter <= 2 && encounter >=0) {
+                var itemIndex = Math.floor(Math.random()* itemData.length);
+                setTimeout(function(){ 
                     bText.append("<p class='m-0'>--You wander around a corner and find a tresure chest!</p>");
-                    var itemIndex = Math.floor(Math.random()* itemData.length);
+                    bText.scrollTop($(bText).prop("scrollHeight"));
                     setTimeout(function(){
                         var item = Math.floor(Math.random() * 2);
                         if( item == 0 ){
@@ -200,39 +195,67 @@ $(document).ready(function(){
                         else {
                             var gold = Math.floor(Math.random() * 50) + 5;
                             bText.append("<p class='m-0'>----Inside the chest you find <b>"+gold+"</b> gold!</p>");
-                            bText.scrollTop($(bText).prop("scrollHeight"));
+                            bText.scrollTop((bText).prop("scrollHeight"));
                             playerInfo.gold = playerInfo.gold + gold;
                             menuFunctions.updateGold();
                             crntlyexplor = 0;
-                        }
+                        };
                     },500);
-                    console.log(playerInfo.inventory);
-                }
-    
-                if( encounter >= 6 ){
+                },500);
+            }else if( encounter >= 6 ){
+                setTimeout (function (){
                     battleFunctions.loadMonster();
                     bText.append("<p class='m-0'>--You wander around and a <b>"+batMonData.firstMon.name+"</b> appears from around the corner!</p>");
-                    bText.scrollTop($(bText).prop("scrollHeight"));
+                    bText.scrollTop($(bText).prop("scrollHeight")); 
                     crntlyInBat = 1;
-                }
-            },1000);
+                },500);
+            }else{
+                setTimeout (function (){
+                    bText.append("<p class='m-0'>--After awhile you find nothing.</p>");
+                    bText.scrollTop($(bText).prop("scrollHeight"));
+                    crntlyexplor = 0;
+                },500);
+            }
         },
         meleeAtkSlash: function(){
+            var bText = $("#battleText");
+            var plyrTmr = $("#plyrTmr");
+            var dmgText = $("#dmgText");
+            var plyrInter = setInterval(pTmr, 100);
+            var pTurnTimer = 4000;
             var dmgDone = playerInfo.atk - (batMonData.firstMon.defense * .50);
-            var monD = batMonData.firstMon
+            var monD = batMonData.firstMon;
             monD.curHp = monD.curHp - dmgDone;
-            console.log(batMonData.firstMon.curHp);
             var percHp = 100 * (monD.curHp/monD.maxHp);
-            console.log("hp as a percentage of max "+percHp);
+
+            bText.append("<p class='m-0' style='color: green;'>*-You Slash <b>"+monD.name+"</b> for <b>"+dmgDone+"</b> damage!-*</p>");
+
             if( monD.curHp <= 0) {
                 this.clearBatMonData();
                 crntlyInBat = 0;
                 crntlyexplor = 0;
                 console.log(batMonData);
             }
-            $("#firstMonHp").css({"width": percHp+"px",});
-            playerTurn = 0;
 
+                // dmgText.html(dmgDone);
+                // dmgText.fadeOut("slow");
+            $("#firstMonHp").css({"width": percHp+"px",});
+            bText.scrollTop($(bText).prop("scrollHeight"));
+
+            var interIterator = 1;
+            function pTmr(){
+                if (interIterator == (pTurnTimer/100)){
+                    clearInterval(plyrInter);
+                    plyrTmr.css({"width": 100+"px"});
+                    interIterator = 1;
+                    playerTurn = 0;
+                }
+                else{
+                    var plyrBar = 100 - 2.5*interIterator;
+                    plyrTmr.css({"width": plyrBar+"px"});
+                    interIterator++;
+                };
+            };
         },
         clearBatMonData: function(){
             var x = batMonData.firstMon;
@@ -283,15 +306,18 @@ $(document).ready(function(){
     //Onclick event for the button with id exploreDunLvl. Calls exploreDunLvl method if crntlyexplor variable is set to 0, else do nothing.
     $("#exploreDunLvl").click(function (){
         if ( crntlyexplor == 0){
+            crntlyexplor = 1;
             battleFunctions.exploreDunLvl();
         }
     });
     //On click event for Slash button under attack tab in the battle menu
     $("#atkSlash").click(function(){
-        if (crntlyInBat == 1 && playerTurn == 0){
-            playerTurn == 1;
+        if ( crntlyInBat == 1 && playerTurn == 0){
+            playerTurn = 1;
             battleFunctions.meleeAtkSlash();
-        }
+        }else{
+            
+        };
     });
 
 });
