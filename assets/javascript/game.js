@@ -1,15 +1,20 @@
 $(document).ready(function(){
+    // current player Hp used during battle.
     var playerHP = 0;
+    // current player Mp used during battle.
     var playerMP = 0;
+    // variable sets to 0 to disable the onclick function from calling exploreDunLvl method untill method has finished running.
     var crntlyexplor = 0;
 
+    // Array containaing arrays of monsters.
     var monInfo = [ //[name,max hp, max mp, attack power, defense, experience]
             rockGolem = ["Rock Golem",200,100, 10, 10,50,],
             ironGolem = ["Iron Golem",300, 200, 5, 5,50,],
             fireGolem = ["Fire Golem",150,100,15,15,50,],
             giantCrab = ["Giant Crab",100,100,6,6,50],
         ]
-    // item Data
+
+    // itemData array contains array of items.
     // value is the gold value of the item
     // type is the type of item
     //      0 = misc item
@@ -31,6 +36,8 @@ $(document).ready(function(){
             ironArmor = ["Iron Armor",50,4,],
     ]
 
+    // Object to store battle monster data, once battle is finished this data will be reset to default values.
+    // Object contains 3 objects. Possiblly for multiple monster battles.
     var batMonData = {
         firstMon: {
             name: "",
@@ -64,6 +71,7 @@ $(document).ready(function(){
         },
     }
 
+    //Object spellData contains spell objects.
     var spellData = {
         fire: {
             name: "Fire",
@@ -87,6 +95,7 @@ $(document).ready(function(){
         },
     }
 
+    // Object to store player information.
     var playerInfo = {
         name: "",
         level: 1,
@@ -97,18 +106,24 @@ $(document).ready(function(){
         gold: 0,
         // equipment list
         equipList: [],
+        // Array of spells the user can use.
         spellList: [spellData.fire,spellData.water,spellData.earth],
+        // Array of items the user has.
         inventory: [itemData[0],itemData[1],itemData[2]],
+        // Random names if user hits cancel when prompt to type in a name,
         randNames: ["Bob","Jerry","Barry","Jill","Heather","Kim"],
     }
 
+    // Object containing the functions pertaining to the left window menu in the html.
     var menuFunctions = {
+        // Loads inventory based on the playerInfo object's inventory array.
         loadInventory: function(){
             $("#inventoryList").html("");
             for (i = 0; i < playerInfo.inventory.length; i++){   
                 $("#inventoryList").append("<p class='inventoryItem' item-type='"+playerInfo.inventory[i][2]+"'>"+playerInfo.inventory[i][0]+"</p>");
             }
         },
+        //  Loads player stats based on the playerInfo object.
         loadPlayerStats: function(){
             $("#playerName").text("Name: "+playerInfo.name);
             $("#playerLevel").text("Level: "+playerInfo.level);
@@ -117,20 +132,25 @@ $(document).ready(function(){
             $("#playerAtk").text("Attack Power: "+playerInfo.atk);
             $("#playerDef").text("Defense :"+playerInfo.def);
         },
+        // Loads spells based on the playerInfo object's spellList array.
         loadPlayerSpells: function(){
             for (i = 0; i < playerInfo.spellList.length; i++){
                 $("#spellsList").append("<p class='playerSpell'>"+playerInfo.spellList[i].name+"</p>");
             }
         },
+        // Updates the playerInfo object's gold value.
         updateGold: function(){
             $("#playerGold").text(playerInfo.gold);
         },
+        // Function to initialize the game, promopting the use to input a name or randomly generate a name. Then calls the methods to populate the information into the html.
         initializeCharacter: function(){
             playerInfo.name = prompt("Please enter your character's name, hit cancel for random name.");
             if(playerInfo.name == null){
                 playerInfo.name = playerInfo.randNames[Math.floor(Math.random() * playerInfo.randNames.length)];
             }
+            // Sets the players current Hp to its maxHp
             playerHP = playerInfo.maxHp;
+            // Sets the players current Mp to its maxMp
             playerMP = playerInfo.maxMp;
             menuFunctions.updateGold();
             menuFunctions.loadPlayerSpells();
@@ -142,7 +162,9 @@ $(document).ready(function(){
         },
     }
 
+    // battleFunctions object contains all the methods used for battles and exploring dungeon levels.
     var battleFunctions = {
+        //This functions is randomly chooses a integer and sets it to variable counter. This variable is used to either find nothing, find a tresure chest, or find a monster.
         exploreDunLvl: function(){
             crntlyexplor = 1;
             $("#battleText").append("<p class='m-0'>You explore the current level of the dungeon...</p>");
@@ -157,12 +179,12 @@ $(document).ready(function(){
                 }
     
                 if ( encounter <= 2 && encounter >=0) {
-                    $("#battleText").append("<p class='m-0'>-You wander around a corner and find a tresure chest!</p>");
+                    $("#battleText").append("<p class='m-0'>--You wander around a corner and find a tresure chest!</p>");
                     var itemIndex = Math.floor(Math.random()* itemData.length);
                     setTimeout(function(){
                         var item = Math.floor(Math.random() * 2);
                         if( item == 0 ){
-                        $("#battleText").append("<p class='m-0'>--Inside the chest you find "+itemData[itemIndex][0]+"!</p>");
+                        $("#battleText").append("<p class='m-0'>----Inside the chest you find "+itemData[itemIndex][0]+"!</p>");
                         $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
                         playerInfo.inventory.push(itemData[itemIndex]);
                         menuFunctions.loadInventory();
@@ -171,7 +193,7 @@ $(document).ready(function(){
                         }
                         else {
                             var gold = Math.floor(Math.random() * 50) + 5;
-                            $("#battleText").append("<p class='m-0'>--Inside the chest you find "+gold+" gold!</p>");
+                            $("#battleText").append("<p class='m-0'>----Inside the chest you find "+gold+" gold!</p>");
                             $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
                             playerInfo.gold = playerInfo.gold + gold;
                             menuFunctions.updateGold();
@@ -182,13 +204,14 @@ $(document).ready(function(){
                 }
     
                 if( encounter >= 6 ){
-                    $("#battleText").append("<p class='m-0'>-You wander around and monster appears from around the corner!</p>");
+                    $("#battleText").append("<p class='m-0'>--You wander around and monster appears from around the corner!</p>");
                     $("#battleText").scrollTop($("#battleText").prop("scrollHeight"));
                     battleFunctions.loadMonster();
                     crntlyexplor = 0;
                 }
             },1000);
         },
+        // This functions randomly selects a monter from the monInfo array and sets its values into the appropriate batMonData object.
         loadMonster: function(){
             var ranIndex = Math.floor(Math.random() * monInfo.length);
             batMonData.firstMon.name = monInfo[ranIndex][0];
@@ -201,12 +224,14 @@ $(document).ready(function(){
             batMonData.firstMon.experience = monInfo[ranIndex][5];
             console.log(batMonData);
         },
+        //Function load the players known spells into the battle window menu in the html.
         loadBatMenuSpells: function(){
             $("#batMenuSpells").html("");
             for (i = 0; i < playerInfo.spellList.length; i++){
                 $("#batMenuSpells").append("<p class='playerSpell'>"+playerInfo.spellList[i].name+"</p>");
             }
         },
+        //Function loads the players usuable items into the battle window menu in the hteml.
         loadBatMenuItems: function(){
             $("#batMenuItem").html("");
             for ( i = 0; i < playerInfo.inventory.length; i++){
@@ -220,8 +245,10 @@ $(document).ready(function(){
         },
     }
     
+    //Called the method initializeCharacter in the menuFunctions.
     menuFunctions.initializeCharacter();
 
+    //Onclick event for the button with id exploreDunLvl. Calls exploreDunLvl method if crntlyexplor variable is set to 0, else do nothing.
     $("#exploreDunLvl").click(function (){
         if ( crntlyexplor == 0){
             battleFunctions.exploreDunLvl();
