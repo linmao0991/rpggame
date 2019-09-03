@@ -18,10 +18,10 @@ $(document).ready(function(){
 
     // Array containaing arrays of monsters.
     var monInfo = [ //[name,max hp, max mp, attack power, defense, experience,image source]
-            rockGolem = ["Rock Golem",50,100, 10, 10,50,"./assets/images/demon.png"],
-            ironGolem = ["Iron Golem",50, 100, 10, 10,50,"./assets/images/demon.png"],
-            fireGolem = ["Fire Golem",35,200,15,7,50,"./assets/images/demon.png"],
-            giantCrab = ["Giant Crab",20,100,6,4,50,"./assets/images/demon.png"],
+            rockGolem = ["Rock Golem",50,100, 10, 15,25,"./assets/images/demon.png"],
+            ironGolem = ["Iron Golem",50, 100, 10, 15,25,"./assets/images/demon.png"],
+            fireGolem = ["Fire Golem",35,200,15,10,25,"./assets/images/demon.png"],
+            giantCrab = ["Giant Crab",20,100,6,8,10,"./assets/images/demon.png"],
         ]
 
     // itemData array contains array of items.
@@ -116,7 +116,8 @@ $(document).ready(function(){
         experience: 0,
         maxHp: 100,
         maxMp: 100,
-        atk: 50,
+        atk: 10,
+        hit: 3,
         def: 10,
         gold: 0,
         // equipment list
@@ -146,8 +147,9 @@ $(document).ready(function(){
             $("#playerHp").text("HP: "+curPlayerHp+"/"+playerInfo.maxHp);
             $("#playerMp").text("MP: "+curPlayerMp+"/"+playerInfo.maxMp);
             $("#playerAtk").text("Attack Power: "+playerInfo.atk);
-            $("#playerDef").text("Defense :"+playerInfo.def);
-            $("#playerExp").text("Experience :"+playerInfo.experience);
+            $("#playerHit").text("Hit Bonus: "+playerInfo.hit);
+            $("#playerDef").text("Defense: "+playerInfo.def);
+            $("#playerExp").text("Experience: "+playerInfo.experience);
         },
         // Loads spells based on the playerInfo object's spellList array.
         loadPlayerSpells: function(){
@@ -232,21 +234,33 @@ $(document).ready(function(){
         },
         monAtk: function(monD){
             console.log(monD);
-            var dmgDone = monD.attack - (playerInfo.def * .50);
-            console.log("damage done: "+dmgDone);
-            curPlayerHp -= dmgDone;
-            var percHp = 100 * (curPlayerHp/playerInfo.maxHp);
-            bText.append("<p class='m-0' style='color: red;'>*-<b>"+monD.name+"</b> melee hits you for <b>"+dmgDone+"</b> damage!-*</p>");
-            bText.scrollTop($(bText).prop("scrollHeight"));
-            $("#plyrHp").css({"width": percHp+"px",});
-            menuFunctions.loadPlayerStats();
+            if( monD.curHp > 0){
+                var dmgDone = monD.attack - (playerInfo.def * .50);
+                console.log("damage done: "+dmgDone);
+                curPlayerHp -= dmgDone;
+                var percHp = 100 * (curPlayerHp/playerInfo.maxHp);
+                bText.append("<p class='m-0' style='color: red;'>*-<b>"+monD.name+"</b> melee hits you for <b>"+dmgDone+"</b> damage!-*</p>");
+                bText.scrollTop($(bText).prop("scrollHeight"));
+                if (curPlayerHp > (playerInfo.maxHp * .33)){
+                    $("#plyrHp").css({"width": percHp+"px",});
+                }else{
+                    $("#plyrHp").css({"width": percHp+"px","background-color": "red"});
+                }
+                menuFunctions.loadPlayerStats();
+                battleFunctions.monTurnTimer(monD);
+            };
         },
         monTurnTimer: function(monD){
             var monInter = setInterval(pTmr, 100);
             var mTurnTimer = 5000;
             var interIterator = 1;
             function pTmr(){
-                if (interIterator == (mTurnTimer/100)){
+                if (monD.curHp <= 0){
+                    clearInterval(monInter);
+                    firstMonTmr.css({"width": 100+"px"});
+                    interIterator = 1;
+                }
+                else if (interIterator == (mTurnTimer/100)){
                     clearInterval(monInter);
                     firstMonTmr.css({"width": 100+"px"});
                     interIterator = 1;
@@ -260,22 +274,28 @@ $(document).ready(function(){
             };
         },
         meleeAtkSlash: function(){
-            var dmgDone = playerInfo.atk - (batMonData.firstMon.defense * .50);
+            var hitRoll = (Math.floor(Math.random() * 20)+1) + playerInfo.hit;
             var monD = batMonData.firstMon;
-            monD.curHp -= dmgDone;
-            var percHp = 100 * (monD.curHp/monD.maxHp);
+            if ( hitRoll > monD.defense){
+                var dmgDone = playerInfo.atk;
+                monD.curHp -= dmgDone;
+                var percHp = 100 * (monD.curHp/monD.maxHp);
+                bText.append("<p class='m-0' style='color: green;'>*-You Slash <b>"+monD.name+"</b> for <b>"+dmgDone+"</b> damage!-*</p>");
+                bText.scrollTop($(bText).prop("scrollHeight"));
+                //If monster curHP <= 0;
+                if( monD.curHp <= 0) {
+                    battleFunctions.onMonDeath(monD);
+                }
 
-            bText.append("<p class='m-0' style='color: green;'>*-You Slash <b>"+monD.name+"</b> for <b>"+dmgDone+"</b> damage!-*</p>");
-            bText.scrollTop($(bText).prop("scrollHeight"));
-            //If monster curHP <= 0;
-            if( monD.curHp <= 0) {
-                battleFunctions.onMonDeath(monD);
-            }
-
-                // dmgText.html(dmgDone);
-                // dmgText.fadeOut("slow");
-            $("#firstMonHp").css({"width": percHp+"px",});
-            battleFunctions.pTurnTimer();
+                    // dmgText.html(dmgDone);
+                    // dmgText.fadeOut("slow");
+                $("#firstMonHp").css({"width": percHp+"px",});
+                battleFunctions.pTurnTimer();
+            }else{
+                bText.append("<p class='m-0' style='color: green;'>*-You Slash, but <b>"+monD.name+"</b> <b>Dodges</b>!-*</p>");
+                bText.scrollTop($(bText).prop("scrollHeight"));
+                battleFunctions.pTurnTimer();
+            };
         },
         pTurnTimer: function(){
             var plyrInter = setInterval(pTmr, 100);
