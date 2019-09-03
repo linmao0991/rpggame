@@ -245,16 +245,25 @@ $(document).ready(function(){
                     bText.scrollTop($(bText).prop("scrollHeight"));
                     if (curPlayerHp > (playerInfo.maxHp * .33)){
                         $("#plyrHp").css({"width": percHp+"px",});
+                        $("#pDmgText").html(dmgDone);
+                        $("#pDmgText").show();
+                        $("#pDmgText").fadeOut("slow");
                         menuFunctions.loadPlayerStats();
                         battleFunctions.monTurnTimer(monD);
                     }else{
                         $("#plyrHp").css({"width": percHp+"px","background-color": "red"});
+                        $("#pDmgText").html(dmgDone);
+                        $("#pDmgText").show();
+                        $("#pDmgText").fadeOut("slow");
                         menuFunctions.loadPlayerStats();
                         battleFunctions.monTurnTimer(monD);
                     };
                 }else{
                     bText.append("<p class='m-0' style='color: red;'>*-<b>"+monD.name+"</b> lunges at you, but you <b>Dodge</b>!-*</p>");
                     bText.scrollTop($(bText).prop("scrollHeight"));
+                    $("#pDmgText").html("Dodge!");
+                    $("#pDmgText").show();
+                    $("#pDmgText").fadeOut("slow");
                     battleFunctions.monTurnTimer(monD);
                 };
             };
@@ -296,14 +305,17 @@ $(document).ready(function(){
                 if( monD.curHp <= 0) {
                     battleFunctions.onMonDeath(monD);
                 }
-
-                    // dmgText.html(dmgDone);
-                    // dmgText.fadeOut("slow");
+                dmgText.html(dmgDone);
+                dmgText.show();
+                dmgText.fadeOut("slow");
                 $("#firstMonHp").css({"width": percHp+"px",});
                 battleFunctions.pTurnTimer();
             }else{
                 bText.append("<p class='m-0' style='color: green;'>*-You Slash, but <b>"+monD.name+"</b> <b>Dodges</b>!-*</p>");
                 bText.scrollTop($(bText).prop("scrollHeight"));
+                dmgText.html("Dodge!");
+                dmgText.show();
+                dmgText.fadeOut("slow");
                 battleFunctions.pTurnTimer();
             };
         },

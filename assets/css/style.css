@@ -53,6 +53,12 @@
     z-index: 1;
 }
 
+#pDmgText{
+    font-size: 24px;
+    color: yellow;
+    z-index: 1;
+}
+
 #firstMonTmr{
     position:absolute;
     height: 5px;
