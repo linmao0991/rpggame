@@ -1,9 +1,9 @@
 $(document).ready(function(){
     $("#firstMon").fadeOut();
     // current player Hp used during battle.
-    var playerHP = 0;
+    var curPlayerHp = 0;
     // current player Mp used during battle.
-    var playerMP = 0;
+    var curPlayerMp = 0;
     // variable sets to 0 to disable the onclick function from calling exploreDunLvl method untill method has finished running.
     var crntlyexplor = 0;
     // variable used to start and end combat.
@@ -14,6 +14,7 @@ $(document).ready(function(){
     var bText = $("#battleText");
     var plyrTmr = $("#plyrTmr");
     var dmgText = $("#dmgText");
+    var firstMonTmr = $("#firstMonTmr");
 
     // Array containaing arrays of monsters.
     var monInfo = [ //[name,max hp, max mp, attack power, defense, experience,image source]
@@ -142,8 +143,8 @@ $(document).ready(function(){
         loadPlayerStats: function(){
             $("#playerName").text("Name: "+playerInfo.name);
             $("#playerLevel").text("Level: "+playerInfo.level);
-            $("#playerHp").text("HP: "+playerHP+"/"+playerInfo.maxHp);
-            $("#playerMp").text("MP: "+playerMP+"/"+playerInfo.maxMp);
+            $("#playerHp").text("HP: "+curPlayerHp+"/"+playerInfo.maxHp);
+            $("#playerMp").text("MP: "+curPlayerMp+"/"+playerInfo.maxMp);
             $("#playerAtk").text("Attack Power: "+playerInfo.atk);
             $("#playerDef").text("Defense :"+playerInfo.def);
             $("#playerExp").text("Experience :"+playerInfo.experience);
@@ -165,9 +166,9 @@ $(document).ready(function(){
                 playerInfo.name = playerInfo.randNames[Math.floor(Math.random() * playerInfo.randNames.length)];
             }
             // Sets the players current Hp to its maxHp
-            playerHP = playerInfo.maxHp;
+            curPlayerHp = playerInfo.maxHp;
             // Sets the players current Mp to its maxMp
-            playerMP = playerInfo.maxMp;
+            curPlayerMp = playerInfo.maxMp;
             menuFunctions.updateGold();
             menuFunctions.loadPlayerSpells();
             menuFunctions.loadPlayerStats();
@@ -219,6 +220,7 @@ $(document).ready(function(){
                     bText.append("<p class='m-0'>---You wander around and a <b>"+batMonData.firstMon.name+"</b> appears from around the corner!</p>");
                     bText.scrollTop($(bText).prop("scrollHeight")); 
                     crntlyInBat = 1;
+                    battleFunctions.monTurnTimer(batMonData.firstMon);
                 },500);
             }else{
                 setTimeout (function (){
@@ -228,10 +230,39 @@ $(document).ready(function(){
                 },500);
             }
         },
+        monAtk: function(monD){
+            console.log(monD);
+            var dmgDone = monD.attack - (playerInfo.def * .50);
+            console.log("damage done: "+dmgDone);
+            curPlayerHp -= dmgDone;
+            var percHp = 100 * (curPlayerHp/playerInfo.maxHp);
+            bText.append("<p class='m-0' style='color: red;'>*-<b>"+monD.name+"</b> melee hits you for <b>"+dmgDone+"</b> damage!-*</p>");
+            bText.scrollTop($(bText).prop("scrollHeight"));
+            $("#plyrHp").css({"width": percHp+"px",});
+            menuFunctions.loadPlayerStats();
+        },
+        monTurnTimer: function(monD){
+            var monInter = setInterval(pTmr, 100);
+            var mTurnTimer = 5000;
+            var interIterator = 1;
+            function pTmr(){
+                if (interIterator == (mTurnTimer/100)){
+                    clearInterval(monInter);
+                    firstMonTmr.css({"width": 100+"px"});
+                    interIterator = 1;
+                    battleFunctions.monAtk(monD);
+                }
+                else{
+                    var tmrBar = 100 - 2.5*interIterator;
+                    firstMonTmr.css({"width": tmrBar+"px"});
+                    interIterator++;
+                };
+            };
+        },
         meleeAtkSlash: function(){
             var dmgDone = playerInfo.atk - (batMonData.firstMon.defense * .50);
             var monD = batMonData.firstMon;
-            monD.curHp = monD.curHp - dmgDone;
+            monD.curHp -= dmgDone;
             var percHp = 100 * (monD.curHp/monD.maxHp);
 
             bText.append("<p class='m-0' style='color: green;'>*-You Slash <b>"+monD.name+"</b> for <b>"+dmgDone+"</b> damage!-*</p>");
@@ -258,8 +289,8 @@ $(document).ready(function(){
                     playerTurn = 0;
                 }
                 else{
-                    var plyrBar = 100 - 2.5*interIterator;
-                    plyrTmr.css({"width": plyrBar+"px"});
+                    var tmrBar = 100 - 2.5*interIterator;
+                    plyrTmr.css({"width": tmrBar+"px"});
                     interIterator++;
                 };
             };
