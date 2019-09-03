@@ -22,7 +22,7 @@ $(document).ready(function(){
             ironGolem = ["Iron Golem",50, 100, 10, 15,25,"./assets/images/demon.png"],
             fireGolem = ["Fire Golem",35,200,15,10,25,"./assets/images/demon.png"],
             giantCrab = ["Giant Crab",20,100,6,8,10,"./assets/images/demon.png"],
-        ]
+        ];
 
     // itemData array contains array of items.
     // value is the gold value of the item
@@ -44,7 +44,7 @@ $(document).ready(function(){
             ironSword = ["Iron Sword", 50, 2, 2],
             ironHelm = ["Iron Helm",50,3, 1],
             ironArmor = ["Iron Armor",50,4, 2],
-    ]
+        ];
 
     // Object to store battle monster data, once battle is finished this data will be reset to default values.
     // Object contains 3 objects. Possiblly for multiple monster battles.
@@ -83,7 +83,7 @@ $(document).ready(function(){
             experience: 0,
             htmlID: "#thirdMon",
         },
-    }
+    };
 
     //Object spellData contains spell objects.
     var spellData = {
@@ -107,7 +107,7 @@ $(document).ready(function(){
             dmg: 10,
             mpCost: 10,
         },
-    }
+    };
 
     // Object to store player information.
     var playerInfo = {
@@ -128,7 +128,7 @@ $(document).ready(function(){
         inventory: [itemData[0],itemData[1],itemData[2]],
         // Random names if user hits cancel when prompt to type in a name,
         randNames: ["Bob","Jerry","Barry","Jill","Heather","Kim"],
-    }
+    };
 
     // Object containing the functions pertaining to the left window menu in the html.
     var menuFunctions = {
@@ -138,7 +138,7 @@ $(document).ready(function(){
             invList.html("");
             for (var i = 0; i < playerInfo.inventory.length; i++){   
                 invList.append("<p class='inventoryItem' item-type='"+playerInfo.inventory[i][2]+"'>"+playerInfo.inventory[i][0]+"</p>");
-            }
+            };
         },
         //  Loads player stats based on the playerInfo object.
         loadPlayerStats: function(){
@@ -155,7 +155,7 @@ $(document).ready(function(){
         loadPlayerSpells: function(){
             for (i = 0; i < playerInfo.spellList.length; i++){
                 $("#spellsList").append("<p class='playerSpell'>"+playerInfo.spellList[i].name+"</p>");
-            }
+            };
         },
         // Updates the playerInfo object's gold value.
         updateGold: function(){
@@ -180,7 +180,7 @@ $(document).ready(function(){
 
             console.log(playerInfo.inventory);
         },
-    }
+    };
 
     // battleFunctions object contains all the methods used for battles and exploring dungeon levels.
     var battleFunctions = {
@@ -230,7 +230,7 @@ $(document).ready(function(){
                     bText.scrollTop($(bText).prop("scrollHeight"));
                     crntlyexplor = 0;
                 },500);
-            }
+            };
         },
         monAtk: function(monD){
             console.log(monD);
@@ -285,7 +285,7 @@ $(document).ready(function(){
                     battleFunctions.monAtk(monD);
                 }
                 else{
-                    var pixel = 100/(mTurnTimer/100)//Formula to reduce pixels so animation is smooth and accurate.
+                    var pixel = 100/(mTurnTimer/100);//Formula to reduce pixels so animation is smooth and accurate.
                     var tmrBar = 100 - pixel*interIterator;
                     firstMonTmr.css({"width": tmrBar+"px"});
                     interIterator++;
@@ -319,6 +319,7 @@ $(document).ready(function(){
                 battleFunctions.pTurnTimer();
             };
         },
+        //Method for using items
         pUseItem: function(){
 
         },
@@ -334,7 +335,7 @@ $(document).ready(function(){
                     playerTurn = 0;
                 }
                 else{
-                    var pixel = 100/(pTurnTimer/100)//Formula to reduce pixels so animation is smooth and accurate.
+                    var pixel = 100/(pTurnTimer/100);//Formula to reduce pixels so animation is smooth and accurate.
                     var tmrBar = 100 - pixel*interIterator;
                     plyrTmr.css({"width": tmrBar+"px"});
                     interIterator++;
@@ -387,7 +388,7 @@ $(document).ready(function(){
             $("#batMenuSpells").html("");
             for (i = 0; i < playerInfo.spellList.length; i++){
                 $("#batMenuSpells").append("<p class='playerSpell'>"+playerInfo.spellList[i].name+"</p>");
-            }
+            };
         },
         //Function loads the players usuable items into the battle window menu in the hteml.
         loadBatMenuItems: function(){
@@ -397,10 +398,10 @@ $(document).ready(function(){
                     $("#batMenuItem").append("<a class='usableItem'>"+playerInfo.inventory[i][0]+"</a>");
                 }
                 else{
-                }
-            }
+                };
+            };
         },
-    }
+    };
     //Called the method initializeCharacter in the menuFunctions.
     menuFunctions.initializeCharacter();
     //Onclick event for the button with id exploreDunLvl. Calls exploreDunLvl method if crntlyexplor variable is set to 0, else do nothing.
