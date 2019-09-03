@@ -10,6 +10,10 @@ $(document).ready(function(){
     // variable to start and end player turn
     var playerTurn = 0;
 
+    var bText = $("#battleText");
+    var plyrTmr = $("#plyrTmr");
+    var dmgText = $("#dmgText");
+
     // Array containaing arrays of monsters.
     var monInfo = [ //[name,max hp, max mp, attack power, defense, experience]
             rockGolem = ["Rock Golem",50,100, 10, 10,50,],
@@ -103,9 +107,10 @@ $(document).ready(function(){
     var playerInfo = {
         name: "",
         level: 1,
+        experience: 0,
         maxHp: 100,
         maxMp: 100,
-        atk: 10,
+        atk: 50,
         def: 10,
         gold: 0,
         // equipment list
@@ -136,6 +141,7 @@ $(document).ready(function(){
             $("#playerMp").text("MP: "+playerMP+"/"+playerInfo.maxMp);
             $("#playerAtk").text("Attack Power: "+playerInfo.atk);
             $("#playerDef").text("Defense :"+playerInfo.def);
+            
         },
         // Loads spells based on the playerInfo object's spellList array.
         loadPlayerSpells: function(){
@@ -171,8 +177,7 @@ $(document).ready(function(){
     var battleFunctions = {
         //This functions is randomly chooses a integer and sets it to variable counter. This variable is used to either find nothing, find a tresure chest, or find a monster.
         exploreDunLvl: function(){
-            var bText =  $("#battleText");
-            bText.append("<p class='m-0'>You explore the current level of the dungeon...</p>");
+            bText.append("<p class='m-0'>-You explore the current level of the dungeon...</p>");
             bText.scrollTop($(bText).prop("scrollHeight"));
             var encounter = Math.floor(Math.random() * 10);
             console.log(encounter);
@@ -180,7 +185,7 @@ $(document).ready(function(){
             if ( encounter <= 2 && encounter >=0) {
                 var itemIndex = Math.floor(Math.random()* itemData.length);
                 setTimeout(function(){ 
-                    bText.append("<p class='m-0'>--You wander around a corner and find a tresure chest!</p>");
+                    bText.append("<p class='m-0'>---You wander around a corner and find a tresure chest!</p>");
                     bText.scrollTop($(bText).prop("scrollHeight"));
                     setTimeout(function(){
                         var item = Math.floor(Math.random() * 2);
@@ -205,43 +210,40 @@ $(document).ready(function(){
             }else if( encounter >= 6 ){
                 setTimeout (function (){
                     battleFunctions.loadMonster();
-                    bText.append("<p class='m-0'>--You wander around and a <b>"+batMonData.firstMon.name+"</b> appears from around the corner!</p>");
+                    bText.append("<p class='m-0'>---You wander around and a <b>"+batMonData.firstMon.name+"</b> appears from around the corner!</p>");
+                    $("#firstMon").fadeIn("slow");
                     bText.scrollTop($(bText).prop("scrollHeight")); 
                     crntlyInBat = 1;
                 },500);
             }else{
                 setTimeout (function (){
-                    bText.append("<p class='m-0'>--After awhile you find nothing.</p>");
+                    bText.append("<p class='m-0'>---After awhile you find nothing.</p>");
                     bText.scrollTop($(bText).prop("scrollHeight"));
                     crntlyexplor = 0;
                 },500);
             }
         },
         meleeAtkSlash: function(){
-            var bText = $("#battleText");
-            var plyrTmr = $("#plyrTmr");
-            var dmgText = $("#dmgText");
-            var plyrInter = setInterval(pTmr, 100);
-            var pTurnTimer = 4000;
             var dmgDone = playerInfo.atk - (batMonData.firstMon.defense * .50);
             var monD = batMonData.firstMon;
             monD.curHp = monD.curHp - dmgDone;
             var percHp = 100 * (monD.curHp/monD.maxHp);
 
             bText.append("<p class='m-0' style='color: green;'>*-You Slash <b>"+monD.name+"</b> for <b>"+dmgDone+"</b> damage!-*</p>");
-
+            bText.scrollTop($(bText).prop("scrollHeight"));
+            //If monster curHP <= 0;
             if( monD.curHp <= 0) {
-                this.clearBatMonData();
-                crntlyInBat = 0;
-                crntlyexplor = 0;
-                console.log(batMonData);
+                battleFunctions.onMonDeath(monD);
             }
 
                 // dmgText.html(dmgDone);
                 // dmgText.fadeOut("slow");
             $("#firstMonHp").css({"width": percHp+"px",});
-            bText.scrollTop($(bText).prop("scrollHeight"));
-
+            battleFunctions.pTurnTimer();
+        },
+        pTurnTimer: function(){
+            var plyrInter = setInterval(pTmr, 100);
+            var pTurnTimer = 4000;
             var interIterator = 1;
             function pTmr(){
                 if (interIterator == (pTurnTimer/100)){
@@ -256,6 +258,15 @@ $(document).ready(function(){
                     interIterator++;
                 };
             };
+        },
+        onMonDeath: function(monD){
+            bText.append("<p class'm-0' style='color:black;'> You Defeated <b>"+monD.name+"</b>! You gained <b>"+monD.experience+"</b> exp!");
+            bText.scrollTop($(bText).prop("scrollHeight"));
+            this.clearBatMonData();
+            crntlyInBat = 0;
+            crntlyexplor = 0;
+            $("#firstMon").fadeOut("slow");
+            console.log(batMonData);
         },
         clearBatMonData: function(){
             var x = batMonData.firstMon;
