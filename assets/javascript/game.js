@@ -32,18 +32,18 @@ $(document).ready(function(){
     //      2 = weapon
     //      3 = helmet
     //      4 = armor
-    var itemData = [ //[name, value, type]
-            iron = ["Iron",10,0,],
-            meat = ["Meat",1,1,],
-            paper = ["Paper",1,0],
-            coal = ["Coal",2,0],
-            wood = ["Wood",1,0],
-            leather = ["Leather",5,0],
-            healingPotion = ["Healing Potion", 20, 1],
-            manaPotion = ["Mana Potion",20,1],
-            ironSword = ["Iron Sword", 50, 2,],
-            ironHelm = ["Iron Helm",50,3,],
-            ironArmor = ["Iron Armor",50,4,],
+    var itemData = [ //[name, value, type,player adjust value]
+            iron = ["Iron",10,0,0],
+            meat = ["Meat",1,1,10],
+            paper = ["Paper",1,0,0],
+            coal = ["Coal",2,0,0],
+            wood = ["Wood",1,0,0],
+            leather = ["Leather",5,0,0],
+            healingPotion = ["Healing Potion", 20, 1,20],
+            manaPotion = ["Mana Potion",20,1,20],
+            ironSword = ["Iron Sword", 50, 2, 2],
+            ironHelm = ["Iron Helm",50,3, 1],
+            ironArmor = ["Iron Armor",50,4, 2],
     ]
 
     // Object to store battle monster data, once battle is finished this data will be reset to default values.
@@ -118,7 +118,7 @@ $(document).ready(function(){
         maxMp: 100,
         atk: 10,
         hit: 3,
-        def: 10,
+        def: 13,
         gold: 0,
         // equipment list
         equipList: [],
@@ -235,24 +235,33 @@ $(document).ready(function(){
         monAtk: function(monD){
             console.log(monD);
             if( monD.curHp > 0){
-                var dmgDone = monD.attack - (playerInfo.def * .50);
-                console.log("damage done: "+dmgDone);
-                curPlayerHp -= dmgDone;
-                var percHp = 100 * (curPlayerHp/playerInfo.maxHp);
-                bText.append("<p class='m-0' style='color: red;'>*-<b>"+monD.name+"</b> melee hits you for <b>"+dmgDone+"</b> damage!-*</p>");
-                bText.scrollTop($(bText).prop("scrollHeight"));
-                if (curPlayerHp > (playerInfo.maxHp * .33)){
-                    $("#plyrHp").css({"width": percHp+"px",});
+                var hitRoll = Math.floor(Math.random() * 20)+1;
+                if ( hitRoll > playerInfo.def){
+                    var dmgDone = monD.attack - (playerInfo.def * .50);
+                    console.log("damage done: "+dmgDone);
+                    curPlayerHp -= dmgDone;
+                    var percHp = 100 * (curPlayerHp/playerInfo.maxHp);
+                    bText.append("<p class='m-0' style='color: red;'>*-<b>"+monD.name+"</b> melee hits you for <b>"+dmgDone+"</b> damage!-*</p>");
+                    bText.scrollTop($(bText).prop("scrollHeight"));
+                    if (curPlayerHp > (playerInfo.maxHp * .33)){
+                        $("#plyrHp").css({"width": percHp+"px",});
+                        menuFunctions.loadPlayerStats();
+                        battleFunctions.monTurnTimer(monD);
+                    }else{
+                        $("#plyrHp").css({"width": percHp+"px","background-color": "red"});
+                        menuFunctions.loadPlayerStats();
+                        battleFunctions.monTurnTimer(monD);
+                    };
                 }else{
-                    $("#plyrHp").css({"width": percHp+"px","background-color": "red"});
-                }
-                menuFunctions.loadPlayerStats();
-                battleFunctions.monTurnTimer(monD);
+                    bText.append("<p class='m-0' style='color: red;'>*-<b>"+monD.name+"</b> lunges at you, but you <b>Dodge</b>!-*</p>");
+                    bText.scrollTop($(bText).prop("scrollHeight"));
+                    battleFunctions.monTurnTimer(monD);
+                };
             };
         },
         monTurnTimer: function(monD){
             var monInter = setInterval(pTmr, 100);
-            var mTurnTimer = 5000;
+            var mTurnTimer = 6000;
             var interIterator = 1;
             function pTmr(){
                 if (monD.curHp <= 0){
@@ -267,7 +276,8 @@ $(document).ready(function(){
                     battleFunctions.monAtk(monD);
                 }
                 else{
-                    var tmrBar = 100 - 2.5*interIterator;
+                    var pixel = 100/(mTurnTimer/100)//Formula to reduce pixels so animation is smooth and accurate.
+                    var tmrBar = 100 - pixel*interIterator;
                     firstMonTmr.css({"width": tmrBar+"px"});
                     interIterator++;
                 };
@@ -297,6 +307,9 @@ $(document).ready(function(){
                 battleFunctions.pTurnTimer();
             };
         },
+        pUseItem: function(){
+
+        },
         pTurnTimer: function(){
             var plyrInter = setInterval(pTmr, 100);
             var pTurnTimer = 4000;
@@ -309,7 +322,8 @@ $(document).ready(function(){
                     playerTurn = 0;
                 }
                 else{
-                    var tmrBar = 100 - 2.5*interIterator;
+                    var pixel = 100/(pTurnTimer/100)//Formula to reduce pixels so animation is smooth and accurate.
+                    var tmrBar = 100 - pixel*interIterator;
                     plyrTmr.css({"width": tmrBar+"px"});
                     interIterator++;
                 };
@@ -368,7 +382,7 @@ $(document).ready(function(){
             $("#batMenuItem").html("");
             for ( i = 0; i < playerInfo.inventory.length; i++){
                 if(playerInfo.inventory[i][2] == 1){
-                    $("#batMenuItem").append("<p class='usableItem'>"+playerInfo.inventory[i][0]+"</p>");
+                    $("#batMenuItem").append("<a class='usableItem'>"+playerInfo.inventory[i][0]+"</a>");
                 }
                 else{
                 }
