@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    $("#firstMon").fadeOut();
     // current player Hp used during battle.
     var playerHP = 0;
     // current player Mp used during battle.
@@ -15,11 +16,11 @@ $(document).ready(function(){
     var dmgText = $("#dmgText");
 
     // Array containaing arrays of monsters.
-    var monInfo = [ //[name,max hp, max mp, attack power, defense, experience]
-            rockGolem = ["Rock Golem",50,100, 10, 10,50,],
-            ironGolem = ["Iron Golem",50, 100, 10, 10,50,],
-            fireGolem = ["Fire Golem",35,200,15,7,50,],
-            giantCrab = ["Giant Crab",20,100,6,4,50],
+    var monInfo = [ //[name,max hp, max mp, attack power, defense, experience,image source]
+            rockGolem = ["Rock Golem",50,100, 10, 10,50,"./assets/images/demon.png"],
+            ironGolem = ["Iron Golem",50, 100, 10, 10,50,"./assets/images/demon.png"],
+            fireGolem = ["Fire Golem",35,200,15,7,50,"./assets/images/demon.png"],
+            giantCrab = ["Giant Crab",20,100,6,4,50,"./assets/images/demon.png"],
         ]
 
     // itemData array contains array of items.
@@ -56,6 +57,8 @@ $(document).ready(function(){
             attack: 0,
             defense: 0,
             experience: 0,
+            htmlID: "#firstMon",
+            srcDir: "",
         },
         secondMon: {
             name: "",
@@ -66,6 +69,7 @@ $(document).ready(function(){
             attack: 0,
             defense: 0,
             experience: 0,
+            htmlID: "#secondMon",
         },
         thirdMon: {
             name: "",
@@ -76,6 +80,7 @@ $(document).ready(function(){
             attack: 0,
             defense: 0,
             experience: 0,
+            htmlID: "#thirdMon",
         },
     }
 
@@ -141,7 +146,7 @@ $(document).ready(function(){
             $("#playerMp").text("MP: "+playerMP+"/"+playerInfo.maxMp);
             $("#playerAtk").text("Attack Power: "+playerInfo.atk);
             $("#playerDef").text("Defense :"+playerInfo.def);
-            
+            $("#playerExp").text("Experience :"+playerInfo.experience);
         },
         // Loads spells based on the playerInfo object's spellList array.
         loadPlayerSpells: function(){
@@ -169,6 +174,7 @@ $(document).ready(function(){
             menuFunctions.loadInventory();
             battleFunctions.loadBatMenuItems();
             battleFunctions.loadBatMenuSpells();
+
             console.log(playerInfo.inventory);
         },
     }
@@ -211,7 +217,6 @@ $(document).ready(function(){
                 setTimeout (function (){
                     battleFunctions.loadMonster();
                     bText.append("<p class='m-0'>---You wander around and a <b>"+batMonData.firstMon.name+"</b> appears from around the corner!</p>");
-                    $("#firstMon").fadeIn("slow");
                     bText.scrollTop($(bText).prop("scrollHeight")); 
                     crntlyInBat = 1;
                 },500);
@@ -262,10 +267,12 @@ $(document).ready(function(){
         onMonDeath: function(monD){
             bText.append("<p class'm-0' style='color:black;'> You Defeated <b>"+monD.name+"</b>! You gained <b>"+monD.experience+"</b> exp!");
             bText.scrollTop($(bText).prop("scrollHeight"));
+            playerInfo.experience += monD.experience;
             this.clearBatMonData();
             crntlyInBat = 0;
             crntlyexplor = 0;
             $("#firstMon").fadeOut("slow");
+            menuFunctions.loadPlayerStats();
             console.log(batMonData);
         },
         clearBatMonData: function(){
@@ -278,6 +285,7 @@ $(document).ready(function(){
             x.attack = 0;
             x.defense = 0;
             x.experience = 0;
+            x.srcDir = "";
         },
         // This functions randomly selects a monter from the monInfo array and sets its values into the appropriate batMonData object.
         loadMonster: function(){
@@ -291,6 +299,10 @@ $(document).ready(function(){
             monData.attack = monInfo[ranIndex][3];
             monData.defense = monInfo[ranIndex][4];
             monData.experience = monInfo[ranIndex][5];
+            monData.srcDir = monInfo[ranIndex][6];
+            $(batMonData.firstMon.htmlID).fadeIn("slow");
+            $("#firstMonHp").css("width", "100px");
+            $("#firstMonImg").attr("src",monData.srcDir);
             console.log(batMonData);
         },
         //Function load the players known spells into the battle window menu in the html.
