@@ -117,7 +117,7 @@ $(document).ready(function(){
         maxHp: 100,
         maxMp: 100,
         atk: 10,
-        hit: 3,
+        hit: 5,
         def: 13,
         gold: 0,
         // equipment list
@@ -125,6 +125,12 @@ $(document).ready(function(){
         // Array of spells the user can use.
         spellList: [spellData.fire,spellData.water,spellData.earth],
         // Array of items the user has.
+        /* New structure for inventory
+        inventory: [
+            {item: itemData[0], itemCount: int,},
+            {item: itemData[1], itemCount: int,},
+        ]
+        */
         inventory: [itemData[0],itemData[1],itemData[2]],
         // Random names if user hits cancel when prompt to type in a name,
         randNames: ["Bob","Jerry","Barry","Jill","Heather","Kim"],

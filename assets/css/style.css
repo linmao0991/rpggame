@@ -77,6 +77,12 @@
     bottom: 60px;
 }
 
+.battleBackground{
+    background-image: url(../images/dun-bg.png);
+    background-size: cover;
+    background-position: center;
+}
+
 .menuWindow {
     width: 100%;
     height: 500px;
