@@ -28,7 +28,7 @@
     height: 5px;
     width: 100px;
     background-color: yellow;
-    bottom: 65px;
+    bottom: 30px;
     right: 50px;
 }
 #plyrHp{
@@ -36,7 +36,7 @@
     height: 5px;
     width: 100px;
     background-color: green;
-    bottom: 60px;
+    bottom: 25px;
     right: 50px;
 }
 #plyrMp{
@@ -44,13 +44,13 @@
     height: 5px;
     width: 100px;
     background-color: blue;
-    bottom: 55px;
+    bottom: 20px;
     right: 50px;
 }
 #dmgText{
     position:absolute;
     bottom: 125px;
-    right: 100px;
+    right: 50px;
     font-size: 24px;
     color: yellow;
     z-index: 1;
@@ -70,8 +70,8 @@
     height: 5px;
     width: 100px;
     background-color: yellow;
-    right: 90px;
-    bottom: 65px;
+    right: 20px;
+    bottom: 30px;
 }
 
 #firstMonHp{
@@ -79,14 +79,16 @@
     height: 5px;
     width: 100px;
     background-color: green;
-    right: 90px;
-    bottom: 60px;
+    right: 20px;
+    bottom: 25px;
 }
 
 .battleBackground{
     background-image: url(../images/dun-bg.png);
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
 }
 
 .menuWindow {
@@ -98,7 +100,7 @@
     position:absolute;
     width: 75px;
     height: 60px;
-    bottom: 80px;
+    bottom: 40px;
     left: 115px;
 }
 
@@ -106,8 +108,8 @@
     position:absolute;
     width: 150px;
     height: 150px;
-    bottom: 75px;
-    right: 50px;
+    bottom: 35px;
+    right: 0px;
 }
 
 .imgDisplay{
