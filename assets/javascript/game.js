@@ -183,7 +183,6 @@ $(document).ready(function(){
             menuFunctions.loadInventory();
             battleFunctions.loadBatMenuItems();
             battleFunctions.loadBatMenuSpells();
-
             console.log(playerInfo.inventory);
         },
     };
@@ -224,6 +223,8 @@ $(document).ready(function(){
                 },500);
             }else if( encounter >= 6 ){
                 setTimeout (function (){
+                    dungeonFunctions.dungeonMusic(0);
+                    battleFunctions.battleMusic(1);
                     battleFunctions.loadMonster();
                     bText.append("<p class='m-0'>---You wander around and a <b>"+batMonData.firstMon.name+"</b> appears from around the corner!</p>");
                     bText.scrollTop($(bText).prop("scrollHeight")); 
@@ -357,6 +358,8 @@ $(document).ready(function(){
             crntlyexplor = 0;
             $("#firstMon").fadeOut("slow");
             menuFunctions.loadPlayerStats();
+            battleFunctions.battleMusic(0);
+            dungeonFunctions.dungeonMusic(1);
             console.log(batMonData);
         },
         clearBatMonData: function(){
@@ -407,7 +410,28 @@ $(document).ready(function(){
                 };
             };
         },
+        battleMusic: function(control){
+            var x = control;
+            if( x == 1){
+            document.getElementById("battleMusic").play();
+            }
+            else{
+            document.getElementById("battleMusic").pause();
+            };
+        },
     };
+
+    var dungeonFunctions = {
+        dungeonMusic: function(control){
+            var x = control;
+            if( x == 1 ){
+                document.getElementById("exploringMusic").play();
+            }else{
+                document.getElementById("exploringMusic").pause();
+            };
+        },
+    };
+
     //Called the method initializeCharacter in the menuFunctions.
     menuFunctions.initializeCharacter();
     //Onclick event for the button with id exploreDunLvl. Calls exploreDunLvl method if crntlyexplor variable is set to 0, else do nothing.
@@ -415,6 +439,7 @@ $(document).ready(function(){
         if ( crntlyexplor == 0){
             crntlyexplor = 1;
             battleFunctions.exploreDunLvl();
+            dungeonFunctions.dungeonMusic(1);
         }
     });
     //On click event for Slash button under attack tab in the battle menu
