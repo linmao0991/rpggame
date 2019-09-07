@@ -48,12 +48,18 @@
     right: 50px;
 }
 #dmgText{
+    position:absolute;
+    bottom: 125px;
+    right: 100px;
     font-size: 24px;
     color: yellow;
     z-index: 1;
 }
 
 #pDmgText{
+    position:absolute;
+    bottom: 125px;
+    left: 130px;
     font-size: 24px;
     color: yellow;
     z-index: 1;
@@ -88,12 +94,12 @@
     height: 500px;
 }
 
-.playerSprite {
+#playerSprite {
     position:absolute;
-    width: 100px;
-    height: 75px;
-    bottom: 100px;
-    left: 100px;
+    width: 75px;
+    height: 60px;
+    bottom: 80px;
+    left: 115px;
 }
 
 .monSprite {

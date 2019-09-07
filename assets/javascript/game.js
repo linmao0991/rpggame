@@ -18,10 +18,10 @@ $(document).ready(function(){
 
     // Array containaing arrays of monsters.
     var monInfo = [ //[name,max hp, max mp, attack power, defense, experience,image source]
-            rockGolem = ["Rock Golem",50,100, 10, 15,25,"./assets/images/demon.png"],
-            ironGolem = ["Iron Golem",50, 100, 10, 15,25,"./assets/images/demon.png"],
-            fireGolem = ["Fire Golem",35,200,15,10,25,"./assets/images/demon.png"],
-            giantCrab = ["Giant Crab",20,100,6,8,10,"./assets/images/demon.png"],
+            demonKing = ["Demon Bug",150,150, 10, 15,75,"./assets/images/evilgod.png"],
+            demonLord = ["Demon Lord",50, 100, 10, 15,25,"./assets/images/demon.png"],
+            fireGolem = ["Fire Golem",35,200,15,10,25,"./assets/images/Fury.png"],
+            fireBlob = ["Fire Blob",20,100,6,8,10,"./assets/images/sunslime.png"],
         ];
 
     // itemData array contains array of items.
@@ -118,7 +118,7 @@ $(document).ready(function(){
         maxMp: 100,
         atk: 10,
         hit: 5,
-        def: 13,
+        def: 10,
         gold: 0,
         // equipment list
         equipList: [],
@@ -281,18 +281,18 @@ $(document).ready(function(){
             function pTmr(){
                 if (monD.curHp <= 0){
                     clearInterval(monInter);
-                    firstMonTmr.css({"width": 100+"px"});
+                    firstMonTmr.css({"width": 0+"px"});
                     interIterator = 1;
                 }
                 else if (interIterator == (mTurnTimer/100)){
                     clearInterval(monInter);
-                    firstMonTmr.css({"width": 100+"px"});
+                    firstMonTmr.css({"width": 0+"px"});
                     interIterator = 1;
                     battleFunctions.monAtk(monD);
                 }
                 else{
                     var pixel = 100/(mTurnTimer/100);//Formula to reduce pixels so animation is smooth and accurate.
-                    var tmrBar = 100 - pixel*interIterator;
+                    var tmrBar = 0 + pixel*interIterator;
                     firstMonTmr.css({"width": tmrBar+"px"});
                     interIterator++;
                 };
@@ -342,7 +342,7 @@ $(document).ready(function(){
                 }
                 else{
                     var pixel = 100/(pTurnTimer/100);//Formula to reduce pixels so animation is smooth and accurate.
-                    var tmrBar = 100 - pixel*interIterator;
+                    var tmrBar = 0 + pixel*interIterator;
                     plyrTmr.css({"width": tmrBar+"px"});
                     interIterator++;
                 };
