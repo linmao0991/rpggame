@@ -17,11 +17,11 @@ $(document).ready(function(){
     var firstMonTmr = $("#firstMonTmr");
 
     // Array containaing arrays of monsters.
-    var monInfo = [ //[name,max hp, max mp, attack power, defense, experience,image source]
-            demonKing = ["Demon Bug",150,150, 10, 15,75,"./assets/images/evilgod.png"],
-            demonLord = ["Demon Lord",50, 100, 10, 15,25,"./assets/images/demon.png"],
-            fireGolem = ["Fire Golem",35,200,15,10,25,"./assets/images/Fury.png"],
-            fireBlob = ["Fire Blob",20,100,6,8,10,"./assets/images/sunslime.png"],
+    var monInfo = [ //[name,max hp, max mp, attack power, defense, experience,image source,element type,]
+            demonKing = ["Demon Bug",50,150, 10, 8,75,"./assets/images/evilgod.png","dark",],
+            demonLord = ["Demon Lord",50, 100, 8, 15,25,"./assets/images/demon.png","dark"],
+            fireGolem = ["Fire Golem",35,200,15,8,25,"./assets/images/Fury.png","fire",],
+            fireBlob = ["Fire Blob",20,100,6,5,10,"./assets/images/sunslime.png","fire",],
         ];
 
     // itemData array contains array of items.
@@ -91,22 +91,37 @@ $(document).ready(function(){
             name: "Fire",
             dmg: 10,
             mpCost: 10,
+            element: "fire",
+            cast: function(){
+
+            }
         },
         water: {
             name: "Water",
             dmg: 10,
             mpCost: 10,
+            element: "water",
         },
         earth: {
             name: "Earth",
             dmg: 10,
             mpCost: 10,
+            element: "earth",
         },
         wind: {
             name: "Wind",
             dmg: 10,
             mpCost: 10,
+            element: "wind",
         },
+        heal: {
+            name: "Heal",
+            heal: 50,
+            mpCost: 10,
+            element: "Holy",
+            cast: function(){
+            },
+        }
     };
 
     // Object to store player information.
@@ -123,7 +138,7 @@ $(document).ready(function(){
         // equipment list
         equipList: [],
         // Array of spells the user can use.
-        spellList: [spellData.fire,spellData.water,spellData.earth],
+        spellList: [spellData.fire,spellData.water,spellData.earth,spellData.heal],
         // Array of items the user has.
         /* New structure for inventory
         inventory: [
@@ -152,7 +167,7 @@ $(document).ready(function(){
                 invList.append("<p class='inventoryItem' item-type='"+pInv[0][0]+"'><span>"+pInv[1]+"</span> - <span>"+pInv[0][0]+"</span></p>");
             };
         },
-        //  Loads player stats based on the playerInfo object.
+        //Loads player stats based on the playerInfo object.
         loadPlayerStats: function(){
             $("#playerName").text("Name: "+playerInfo.name);
             $("#playerLevel").text("Level: "+playerInfo.level);
@@ -189,7 +204,6 @@ $(document).ready(function(){
             menuFunctions.loadInventory();
             battleFunctions.loadBatMenuItems();
             battleFunctions.loadBatMenuSpells();
-            console.log(playerInfo.inventory);
         },
         //Function to add item to inventory
         playerInvAddItem: function(x){
@@ -274,13 +288,12 @@ $(document).ready(function(){
                 },500);
             };
         },
+        //Method for monster attacks
         monAtk: function(monD){
-            console.log(monD);
             if( monD.curHp > 0){
                 var hitRoll = Math.floor(Math.random() * 20)+1;
                 if ( hitRoll > playerInfo.def){
                     var dmgDone = monD.attack - (playerInfo.def * .50);
-                    console.log("damage done: "+dmgDone);
                     curPlayerHp -= dmgDone;
                     var percHp = 100 * (curPlayerHp/playerInfo.maxHp);
                     bText.append("<p class='m-0' style='color: red;'>*-<b>"+monD.name+"</b> melee hits you for <b>"+dmgDone+"</b> damage!-*</p>");
@@ -310,6 +323,7 @@ $(document).ready(function(){
                 };
             };
         },
+        //Monster turn timer bar
         monTurnTimer: function(monD){
             var monInter = setInterval(pTmr, 100);
             var mTurnTimer = 6000;
@@ -334,6 +348,7 @@ $(document).ready(function(){
                 };
             };
         },
+        //player Slash Attack
         meleeAtkSlash: function(){
             var hitRoll = (Math.floor(Math.random() * 20)+1) + playerInfo.hit;
             var monD = batMonData.firstMon;
@@ -365,6 +380,7 @@ $(document).ready(function(){
         pUseItem: function(){
 
         },
+        //Player turn timer bar
         pTurnTimer: function(){
             var plyrInter = setInterval(pTmr, 100);
             var pTurnTimer = 4000;
@@ -384,6 +400,7 @@ $(document).ready(function(){
                 };
             };
         },
+        //Method called when monster is defeated.
         onMonDeath: function(monD){
             bText.append("<p class'm-0' style='color:black;'> You Defeated <b>"+monD.name+"</b>! You gained <b>"+monD.experience+"</b> exp!");
             bText.scrollTop($(bText).prop("scrollHeight"));
@@ -395,8 +412,8 @@ $(document).ready(function(){
             menuFunctions.loadPlayerStats();
             battleFunctions.battleMusic(0);
             dungeonFunctions.dungeonMusic(1);
-            console.log(batMonData);
         },
+        //Clears batMonData object
         clearBatMonData: function(){
             var x = batMonData.firstMon;
             x.name = "";
@@ -409,7 +426,7 @@ $(document).ready(function(){
             x.experience = 0;
             x.srcDir = "";
         },
-        // This functions randomly selects a monter from the monInfo array and sets its values into the appropriate batMonData object.
+        // This Method randomly selects a monter from the monInfo array and sets its values into the appropriate batMonData object.
         loadMonster: function(){
             var ranIndex = Math.floor(Math.random() * monInfo.length);
             var monData = batMonData.firstMon;
@@ -425,16 +442,15 @@ $(document).ready(function(){
             $(batMonData.firstMon.htmlID).fadeIn("slow");
             $("#firstMonHp").css("width", "100px");
             $("#firstMonImg").attr("src",monData.srcDir);
-            console.log(batMonData);
         },
-        //Function load the players known spells into the battle window menu in the html.
+        //Method load the players known spells into the battle window menu in the html.
         loadBatMenuSpells: function(){
             $("#batMenuSpells").html("");
             for (i = 0; i < playerInfo.spellList.length; i++){
-                $("#batMenuSpells").append("<p class='playerSpell'>"+playerInfo.spellList[i].name+"</p>");
+                $("#batMenuSpells").append("<button type='button' class='btn btn-warning m-2 spellButton' id='"+playerInfo.spellList[i].name+"'>"+playerInfo.spellList[i].name+"</button>");
             };
         },
-        //Function loads the players usuable items into the battle window menu in the hteml.
+        //Method loads the players usuable items into the battle window menu in the hteml.
         loadBatMenuItems: function(){
             $("#batMenuItem").html("");
             for ( i = 0; i < playerInfo.inventory.length; i++){
@@ -446,6 +462,7 @@ $(document).ready(function(){
                 };
             };
         },
+        //Method to control battle music
         battleMusic: function(control){
             var x = control;
             if( x == 1){
@@ -457,7 +474,9 @@ $(document).ready(function(){
         },
     };
 
+    //Object for all dungeon methods
     var dungeonFunctions = {
+        //Method to control dungeon music.
         dungeonMusic: function(control){
             var x = control;
             if( x == 1 ){
@@ -473,8 +492,6 @@ $(document).ready(function(){
         var itemIndex = index;
         for  (var i = 0; i < playerInfo.inventory.length; i++){
             var currentIndex = playerInfo.inventory[i];
-            console.log("itemData "+itemData[itemIndex][0]);
-            console.log("currentIndex: "+currentIndex[0][0]);
             if( currentIndex[0][0] == itemData[itemIndex][0]){
                 return i;
             };
@@ -502,5 +519,4 @@ $(document).ready(function(){
             
         };
     });
-
 });
