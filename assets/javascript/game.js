@@ -33,17 +33,17 @@ $(document).ready(function(){
     //      3 = helmet
     //      4 = armor
     var itemData = [ //[name, value, type,player adjust value]
-            iron = ["Iron",10,0,0],
-            meat = ["Meat",1,1,10],
-            paper = ["Paper",1,0,0],
-            coal = ["Coal",2,0,0],
-            wood = ["Wood",1,0,0],
-            leather = ["Leather",5,0,0],
-            healingPotion = ["Healing Potion", 20, 1,20],
-            manaPotion = ["Mana Potion",20,1,20],
-            ironSword = ["Iron Sword", 50, 2, 2],
-            ironHelm = ["Iron Helm",50,3, 1],
-            ironArmor = ["Iron Armor",50,4, 2],
+            ["Iron",10,0,0],
+            ["Meat",1,1,10],
+            ["Paper",1,0,0],
+            ["Coal",2,0,0],
+            ["Wood",1,0,0],
+            ["Leather",5,0,0],
+            ["Healing Potion", 20, 1,20],
+            ["Mana Potion",20,1,20],
+            ["Iron Sword", 50, 2, 2],
+            ["Iron Helm",50,3, 1],
+            ["Iron Armor",50,4, 2],
         ];
 
     // Object to store battle monster data, once battle is finished this data will be reset to default values.
@@ -116,8 +116,8 @@ $(document).ready(function(){
         experience: 0,
         maxHp: 100,
         maxMp: 100,
-        atk: 10,
-        hit: 5,
+        atk: 100,
+        hit: 50,
         def: 10,
         gold: 0,
         // equipment list
@@ -131,7 +131,12 @@ $(document).ready(function(){
             {item: itemData[1], itemCount: int,},
         ]
         */
-        inventory: [itemData[0],itemData[1],itemData[2]],
+        inventory: [
+            //[itemData[Index],Count]
+            [itemData[0],1,],
+            [itemData[1],1,],
+            [itemData[2],1,],
+        ],
         // Random names if user hits cancel when prompt to type in a name,
         randNames: ["Bob","Jerry","Barry","Jill","Heather","Kim"],
     };
@@ -142,8 +147,9 @@ $(document).ready(function(){
         loadInventory: function(){
             var invList = $("#inventoryList");
             invList.html("");
-            for (var i = 0; i < playerInfo.inventory.length; i++){   
-                invList.append("<p class='inventoryItem' item-type='"+playerInfo.inventory[i][2]+"'>"+playerInfo.inventory[i][0]+"</p>");
+            for (var i = 0; i < playerInfo.inventory.length; i++){
+                var pInv =  playerInfo.inventory[i];
+                invList.append("<p class='inventoryItem' item-type='"+pInv[0][0]+"'><span>"+pInv[1]+"</span> - <span>"+pInv[0][0]+"</span></p>");
             };
         },
         //  Loads player stats based on the playerInfo object.
@@ -185,6 +191,30 @@ $(document).ready(function(){
             battleFunctions.loadBatMenuSpells();
             console.log(playerInfo.inventory);
         },
+        //Function to add item to inventory
+        playerInvAddItem: function(x){
+            // x is the itemData array index
+            var index = x;
+            var inventory = playerInfo.inventory;
+            //Adds the itemData index to the players inventory and the count.
+            inventory.push([itemData[index], 1]);
+            //Reloads menu and battle inventories
+            menuFunctions.loadInventory();
+            battleFunctions.loadBatMenuItems();
+        },
+        //Function to add to the count of existing item in player inventory
+        playerInvAddCount: function(x){
+            // x is the itemData array index
+            var itemArrayIndex = x;
+            // Calls the array method and passes through the itemData array index and returns the index of the item in players inventory
+            var index = playerInfo.inventory.invCheckLoop(itemArrayIndex);
+            var inventoryItem = playerInfo.inventory[index];
+            //Adds 1 to the count of items in the players inventory
+            inventoryItem[1] = inventoryItem[1] + 1;
+            //Reloads menu and battle inventories
+            menuFunctions.loadInventory();
+            battleFunctions.loadBatMenuItems();
+        },
     };
 
     // battleFunctions object contains all the methods used for battles and exploring dungeon levels.
@@ -193,23 +223,26 @@ $(document).ready(function(){
         exploreDunLvl: function(){
             bText.append("<p class='m-0'>-You explore the current level of the dungeon...</p>");
             bText.scrollTop($(bText).prop("scrollHeight"));
-            var encounter = Math.floor(Math.random() * 10);
-            console.log(encounter);
-
-            if ( encounter <= 2 && encounter >=0) {
-                var itemIndex = Math.floor(Math.random()* itemData.length);
+            // Random number to determine the encounter
+            var encounter = Math.floor(Math.random() * 10)+1;
+            // if encounter is 1 - 3 then find find a treasure chest
+            if ( encounter <= 3 && encounter >=1) {
+                var itemArrayIndex = Math.floor(Math.random()* itemData.length);
                 setTimeout(function(){ 
                     bText.append("<p class='m-0'>---You wander around a corner and find a tresure chest!</p>");
                     bText.scrollTop($(bText).prop("scrollHeight"));
                     setTimeout(function(){
-                        var item = Math.floor(Math.random() * 2);
-                        if( item == 0 ){
-                        bText.append("<p class='m-0'>----Inside the chest you find <b>"+itemData[itemIndex][0]+"</b>!</p>");
-                        bText.scrollTop($(bText).prop("scrollHeight"));
-                        playerInfo.inventory.push(itemData[itemIndex]);
-                        menuFunctions.loadInventory();
-                        battleFunctions.loadBatMenuItems();
-                        crntlyexplor = 0;
+                        // var chestContent = Math.floor(Math.random() * 2);
+                        var chestContent = 0;
+                        if( chestContent == 0 ){
+                            bText.append("<p class='m-0'>----Inside the chest you find <b>"+itemData[itemArrayIndex][0]+"</b>!</p>");
+                            bText.scrollTop($(bText).prop("scrollHeight"));
+                            if(!Number.isInteger(playerInfo.inventory.invCheckLoop(itemArrayIndex))){
+                                menuFunctions.playerInvAddItem(itemArrayIndex);
+                            }else{
+                                menuFunctions.playerInvAddCount(itemArrayIndex);
+                            };
+                            crntlyexplor = 0;
                         }
                         else {
                             var gold = Math.floor(Math.random() * 50) + 5;
@@ -221,7 +254,8 @@ $(document).ready(function(){
                         };
                     },500);
                 },500);
-            }else if( encounter >= 6 ){
+            //Else if encouanter is 8-10 then encounter monster
+            }else if( encounter >= 8 ){
                 setTimeout (function (){
                     dungeonFunctions.dungeonMusic(0);
                     battleFunctions.battleMusic(1);
@@ -231,6 +265,7 @@ $(document).ready(function(){
                     crntlyInBat = 1;
                     battleFunctions.monTurnTimer(batMonData.firstMon);
                 },500);
+            //if 4-7 then encounter nothing.
             }else{
                 setTimeout (function (){
                     bText.append("<p class='m-0'>---After awhile you find nothing.</p>");
@@ -403,8 +438,9 @@ $(document).ready(function(){
         loadBatMenuItems: function(){
             $("#batMenuItem").html("");
             for ( i = 0; i < playerInfo.inventory.length; i++){
-                if(playerInfo.inventory[i][2] == 1){
-                    $("#batMenuItem").append("<a class='usableItem'>"+playerInfo.inventory[i][0]+"</a>");
+                if(playerInfo.inventory[i][0][2] == 1){
+                    var pInv = playerInfo.inventory[i];
+                    $("#batMenuItem").append("<a class='usableItem'>"+pInv[0][0]+" ("+pInv[1]+")</a>");
                 }
                 else{
                 };
@@ -432,8 +468,23 @@ $(document).ready(function(){
         },
     };
 
+    //Section for my array methods
+    Array.prototype.invCheckLoop = function (index){
+        var itemIndex = index;
+        for  (var i = 0; i < playerInfo.inventory.length; i++){
+            var currentIndex = playerInfo.inventory[i];
+            console.log("itemData "+itemData[itemIndex][0]);
+            console.log("currentIndex: "+currentIndex[0][0]);
+            if( currentIndex[0][0] == itemData[itemIndex][0]){
+                return i;
+            };
+        };
+        return false;
+    };
+
     //Called the method initializeCharacter in the menuFunctions.
     menuFunctions.initializeCharacter();
+
     //Onclick event for the button with id exploreDunLvl. Calls exploreDunLvl method if crntlyexplor variable is set to 0, else do nothing.
     $("#exploreDunLvl").click(function (){
         if ( crntlyexplor == 0){
