@@ -1,4 +1,4 @@
-$(document).ready(function(){
+// $(document).ready(function(){
     $("#firstMon").fadeOut();
     // current player Hp used during battle.
     var curPlayerHp = 0;
@@ -89,6 +89,7 @@ $(document).ready(function(){
     var spellData = {
         fire: {
             name: "Fire",
+            heal: 0,
             dmg: 10,
             mpCost: 10,
             element: "fire",
@@ -98,30 +99,34 @@ $(document).ready(function(){
         },
         water: {
             name: "Water",
+            heal: 0,
             dmg: 10,
             mpCost: 10,
             element: "water",
         },
         earth: {
             name: "Earth",
+            heal: 0,
             dmg: 10,
             mpCost: 10,
             element: "earth",
         },
         wind: {
             name: "Wind",
+            heal: 0,
             dmg: 10,
             mpCost: 10,
             element: "wind",
         },
         heal: {
             name: "Heal",
-            heal: 50,
+            heal: 25,
+            dmg: 0,
             mpCost: 10,
             element: "Holy",
             cast: function(){
             },
-        }
+        },
     };
 
     // Object to store player information.
@@ -140,12 +145,6 @@ $(document).ready(function(){
         // Array of spells the user can use.
         spellList: [spellData.fire,spellData.water,spellData.earth,spellData.heal],
         // Array of items the user has.
-        /* New structure for inventory
-        inventory: [
-            {item: itemData[0], itemCount: int,},
-            {item: itemData[1], itemCount: int,},
-        ]
-        */
         inventory: [
             //[itemData[Index],Count]
             [itemData[0],1,],
@@ -232,62 +231,7 @@ $(document).ready(function(){
     };
 
     // battleFunctions object contains all the methods used for battles and exploring dungeon levels.
-    var battleFunctions = {
-        //This functions is randomly chooses a integer and sets it to variable counter. This variable is used to either find nothing, find a tresure chest, or find a monster.
-        exploreDunLvl: function(){
-            bText.append("<p class='m-0'>-You explore the current level of the dungeon...</p>");
-            bText.scrollTop($(bText).prop("scrollHeight"));
-            // Random number to determine the encounter
-            var encounter = Math.floor(Math.random() * 10)+1;
-            // if encounter is 1 - 3 then find find a treasure chest
-            if ( encounter <= 3 && encounter >=1) {
-                var itemArrayIndex = Math.floor(Math.random()* itemData.length);
-                setTimeout(function(){ 
-                    bText.append("<p class='m-0'>---You wander around a corner and find a tresure chest!</p>");
-                    bText.scrollTop($(bText).prop("scrollHeight"));
-                    setTimeout(function(){
-                        // var chestContent = Math.floor(Math.random() * 2);
-                        var chestContent = 0;
-                        if( chestContent == 0 ){
-                            bText.append("<p class='m-0'>----Inside the chest you find <b>"+itemData[itemArrayIndex][0]+"</b>!</p>");
-                            bText.scrollTop($(bText).prop("scrollHeight"));
-                            if(!Number.isInteger(playerInfo.inventory.invCheckLoop(itemArrayIndex))){
-                                menuFunctions.playerInvAddItem(itemArrayIndex);
-                            }else{
-                                menuFunctions.playerInvAddCount(itemArrayIndex);
-                            };
-                            crntlyexplor = 0;
-                        }
-                        else {
-                            var gold = Math.floor(Math.random() * 50) + 5;
-                            bText.append("<p class='m-0'>----Inside the chest you find <b>"+gold+"</b> gold!</p>");
-                            bText.scrollTop((bText).prop("scrollHeight"));
-                            playerInfo.gold = playerInfo.gold + gold;
-                            menuFunctions.updateGold();
-                            crntlyexplor = 0;
-                        };
-                    },500);
-                },500);
-            //Else if encouanter is 8-10 then encounter monster
-            }else if( encounter >= 8 ){
-                setTimeout (function (){
-                    dungeonFunctions.dungeonMusic(0);
-                    battleFunctions.battleMusic(1);
-                    battleFunctions.loadMonster();
-                    bText.append("<p class='m-0'>---You wander around and a <b>"+batMonData.firstMon.name+"</b> appears from around the corner!</p>");
-                    bText.scrollTop($(bText).prop("scrollHeight")); 
-                    crntlyInBat = 1;
-                    battleFunctions.monTurnTimer(batMonData.firstMon);
-                },500);
-            //if 4-7 then encounter nothing.
-            }else{
-                setTimeout (function (){
-                    bText.append("<p class='m-0'>---After awhile you find nothing.</p>");
-                    bText.scrollTop($(bText).prop("scrollHeight"));
-                    crntlyexplor = 0;
-                },500);
-            };
-        },
+    var battleFunctions = {    
         //Method for monster attacks
         monAtk: function(monD){
             if( monD.curHp > 0){
@@ -413,6 +357,63 @@ $(document).ready(function(){
             battleFunctions.battleMusic(0);
             dungeonFunctions.dungeonMusic(1);
         },
+        //Method called to perform the function to cast the spell player selected
+        playerUseSpell: function(spell){
+            // spell is a string so spellName will be a string. Read below to see how to access spellData object properties.
+            // To access spellData properties use [spellName] in brackerts or you will get an error.
+            // example. spellData[spellName].dmg
+            var monD = batMonData.firstMon;
+            var spellText = $(spell).attr("data-spell");
+            var spellName = $(spell).attr("data-spell").toLowerCase();
+            if ( curPlayerMp < spellData[spellName].mpCost){
+                bText.append("<p class='m-0' style='color: green;'>*-You do not have enough mana!-*</p>");
+                bText.scrollTop($(bText).prop("scrollHeight"));
+            }else if ( crntlyInBat == 1 && playerTurn == 0){
+                playerTurn = 1;
+                var dmg = spellData[spellName].dmg;
+                var mpcost = spellData[spellName].mpCost;
+                var element = spellData[spellName].element;
+                var heal = spellData[spellName].heal;
+                if( heal > 0){
+                    if (curPlayerHp == playerInfo.maxHp){
+                        bText.append("<p class='m-0' style='color: green;'>*-You cast <b>"+spellText+"</b> on yourself, but your HP is full!-*</p>");
+                        bText.scrollTop($(bText).prop("scrollHeight"));
+                        menuFunctions.loadPlayerStats();
+                    }else{
+                        curPlayerHp = Math.min(curPlayerHp + heal, playerInfo.maxHp);
+                        console.log("current hp: "+curPlayerHp);
+                        curPlayerMp -= mpcost;
+                        var percHp = 100 * (curPlayerHp/playerInfo.maxHp);
+                        var percMp = 100 * (curPlayerMp/playerInfo.maxMp);
+                        bText.append("<p class='m-0' style='color: green;'>*-You cast <b>"+spellText+"</b> on yourself for <b>"+heal+"</b> HP!-*</p>");
+                        bText.scrollTop($(bText).prop("scrollHeight"));
+                        $("#pDmgText").html("<font color='green'>+"+heal+" HP</font>");
+                        $("#pDmgText").show();
+                        $("#pDmgText").fadeOut("slow");
+                        $("#plyrHp").css({"width": percHp+"px",});
+                        $("#plyrMp").css({"width": percMp+"px",});
+                        menuFunctions.loadPlayerStats();
+                    };
+                }else{
+                    monD.curHp -= dmg;
+                    curPlayerMp -= mpcost;
+                    var percHp = 100 * (monD.curHp/monD.maxHp);
+                    var percMp = 100 * (curPlayerMp/playerInfo.maxMp);
+                    bText.append("<p class='m-0' style='color: green;'>*-You cast <b>"+spellText+"</b> on <b>"+monD.name+"</b> for <b>"+dmg+"</b> Damage!-*</p>");
+                    bText.scrollTop($(bText).prop("scrollHeight"));
+                    if( monD.curHp <= 0) {
+                        battleFunctions.onMonDeath(monD);
+                    };
+                    dmgText.html(dmg);
+                    dmgText.show();
+                    dmgText.fadeOut("slow");
+                    $("#firstMonHp").css({"width": percHp+"px",});
+                    $("#plyrMp").css({"width": percMp+"px",});
+                    menuFunctions.loadPlayerStats();
+                };
+                battleFunctions.pTurnTimer();
+            };
+        },
         //Clears batMonData object
         clearBatMonData: function(){
             var x = batMonData.firstMon;
@@ -447,7 +448,7 @@ $(document).ready(function(){
         loadBatMenuSpells: function(){
             $("#batMenuSpells").html("");
             for (i = 0; i < playerInfo.spellList.length; i++){
-                $("#batMenuSpells").append("<button type='button' class='btn btn-warning m-2 spellButton' id='"+playerInfo.spellList[i].name+"'>"+playerInfo.spellList[i].name+"</button>");
+                $("#batMenuSpells").append("<button type='button' onclick='battleFunctions.playerUseSpell(this)' class='btn btn-warning m-2 spellButton' id='"+playerInfo.spellList[i].name+"' data-spell='"+playerInfo.spellList[i].name+"'>"+playerInfo.spellList[i].name+"</button>");
             };
         },
         //Method loads the players usuable items into the battle window menu in the hteml.
@@ -476,6 +477,61 @@ $(document).ready(function(){
 
     //Object for all dungeon methods
     var dungeonFunctions = {
+        //This functions is randomly chooses a integer and sets it to variable counter. This variable is used to either find nothing, find a tresure chest, or find a monster.
+        exploreDunLvl: function(){
+            bText.append("<p class='m-0'>-You explore the current level of the dungeon...</p>");
+            bText.scrollTop($(bText).prop("scrollHeight"));
+            // Random number to determine the encounter
+            var encounter = Math.floor(Math.random() * 10)+1;
+            // if encounter is 1 - 3 then find find a treasure chest
+            if ( encounter <= 3 && encounter >=1) {
+                var itemArrayIndex = Math.floor(Math.random()* itemData.length);
+                setTimeout(function(){ 
+                    bText.append("<p class='m-0'>---You wander around a corner and find a tresure chest!</p>");
+                    bText.scrollTop($(bText).prop("scrollHeight"));
+                    setTimeout(function(){
+                        // var chestContent = Math.floor(Math.random() * 2);
+                        var chestContent = 0;
+                        if( chestContent == 0 ){
+                            bText.append("<p class='m-0'>----Inside the chest you find <b>"+itemData[itemArrayIndex][0]+"</b>!</p>");
+                            bText.scrollTop($(bText).prop("scrollHeight"));
+                            if(!Number.isInteger(playerInfo.inventory.invCheckLoop(itemArrayIndex))){
+                                menuFunctions.playerInvAddItem(itemArrayIndex);
+                            }else{
+                                menuFunctions.playerInvAddCount(itemArrayIndex);
+                            };
+                            crntlyexplor = 0;
+                        }
+                        else {
+                            var gold = Math.floor(Math.random() * 50) + 5;
+                            bText.append("<p class='m-0'>----Inside the chest you find <b>"+gold+"</b> gold!</p>");
+                            bText.scrollTop((bText).prop("scrollHeight"));
+                            playerInfo.gold = playerInfo.gold + gold;
+                            menuFunctions.updateGold();
+                            crntlyexplor = 0;
+                        };
+                    },500);
+                },500);
+            //Else if encouanter is 8-10 then encounter monster
+            }else if( encounter >= 8 ){
+                setTimeout (function (){
+                    dungeonFunctions.dungeonMusic(0);
+                    battleFunctions.battleMusic(1);
+                    battleFunctions.loadMonster();
+                    bText.append("<p class='m-0'>---You wander around and a <b>"+batMonData.firstMon.name+"</b> appears from around the corner!</p>");
+                    bText.scrollTop($(bText).prop("scrollHeight")); 
+                    crntlyInBat = 1;
+                    battleFunctions.monTurnTimer(batMonData.firstMon);
+                },500);
+            //if 4-7 then encounter nothing.
+            }else{
+                setTimeout (function (){
+                    bText.append("<p class='m-0'>---After awhile you find nothing.</p>");
+                    bText.scrollTop($(bText).prop("scrollHeight"));
+                    crntlyexplor = 0;
+                },500);
+            };
+        },
         //Method to control dungeon music.
         dungeonMusic: function(control){
             var x = control;
@@ -506,7 +562,7 @@ $(document).ready(function(){
     $("#exploreDunLvl").click(function (){
         if ( crntlyexplor == 0){
             crntlyexplor = 1;
-            battleFunctions.exploreDunLvl();
+            dungeonFunctions.exploreDunLvl();
             dungeonFunctions.dungeonMusic(1);
         }
     });
@@ -514,9 +570,8 @@ $(document).ready(function(){
     $("#atkSlash").click(function(){
         if ( crntlyInBat == 1 && playerTurn == 0){
             playerTurn = 1;
-            battleFunctions.meleeAtkSlash();
-        }else{
-            
+            battleFunctions.meleeAtkSlash();  
         };
     });
-});
+    
+// });
